@@ -1,5 +1,5 @@
 name: flutter_course
-description: A new Flutter project.
+description: Flutter, TDD, Clean Architecture, SOLID e Design Patterns
 
 publish_to: 'none'
 
@@ -15,6 +15,8 @@ dependencies:
   test:  
   mockito: 
   faker: 
+  http: 
+  mocktail: 
 
 dev_dependencies:
   flutter_test:
