@@ -10,7 +10,7 @@ class HttpAdapter {
 
   HttpAdapter(this.client);
 
-  Future<dynamic> request({
+  Future<Map?> request({
     required String url,
     required String method,
     Map? body,
@@ -20,11 +20,13 @@ class HttpAdapter {
       'accept': 'application/json'
     };
 
-    await client.post(
+    final response = await client.post(
       Uri.parse(url),
       headers: headers,
       body: (body != null) ? jsonEncode(body) : null,
     );
+
+    return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
 
@@ -84,8 +86,11 @@ void main() {
         'Should call post with body',
         () async {
           when(
-            () => client.post(any(),
-                headers: any(named: 'headers'), body: any(named: 'body')),
+            () => client.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
           ).thenAnswer(
             (_) async => Response('{}', 200),
           );
@@ -114,8 +119,11 @@ void main() {
         'Should call post without body',
         () async {
           when(
-            () => client.post(any(),
-                headers: any(named: 'headers'), body: any(named: 'body')),
+            () => client.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
           ).thenAnswer(
             (_) async => Response('{}', 200),
           );
@@ -136,6 +144,72 @@ void main() {
               },
             ),
           );
+        },
+      );
+
+      test(
+        'Should return data when post return 200',
+        () async {
+          when(
+            () => client.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => Response('{"any_key":"any_value"}', 200),
+          );
+
+          final response = await sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(response, body);
+        },
+      );
+
+      test(
+        'Should return null when post return 200 with no data',
+        () async {
+          when(
+            () => client.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => Response('', 200),
+          );
+
+          final response = await sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(response, null);
+        },
+      );
+
+      test(
+        'Should return data when post return 204',
+        () async {
+          when(
+            () => client.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => Response('{"any_key":"any_value"}', 204),
+          );
+
+          final response = await sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(response, body);
         },
       );
     },
