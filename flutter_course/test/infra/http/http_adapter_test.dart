@@ -20,7 +20,11 @@ class HttpAdapter {
       'accept': 'application/json'
     };
 
-    await client.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
+    await client.post(
+      Uri.parse(url),
+      headers: headers,
+      body: (body != null) ? jsonEncode(body) : null,
+    );
   }
 }
 
@@ -31,10 +35,12 @@ void main() {
 
   late ClientSpy client;
   late HttpAdapter sut;
+  late Map body;
 
   setUp(() {
     client = ClientSpy();
     sut = HttpAdapter(client);
+    body = {'any_key': 'any_value'};
   });
 
   setUpAll(() {
@@ -77,8 +83,6 @@ void main() {
       test(
         'Should call post with body',
         () async {
-          final body = {'any_key': 'any_value'};
-
           when(
             () => client.post(any(),
                 headers: any(named: 'headers'), body: any(named: 'body')),
@@ -102,6 +106,35 @@ void main() {
                   'accept': 'application/json',
                 },
                 body: '{"any_key":"any_value"}'),
+          );
+        },
+      );
+
+      test(
+        'Should call post without body',
+        () async {
+          when(
+            () => client.post(any(),
+                headers: any(named: 'headers'), body: any(named: 'body')),
+          ).thenAnswer(
+            (_) async => Response('{}', 200),
+          );
+
+          await sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          verify(
+            () => client.post(
+              Uri.parse(
+                url,
+              ),
+              headers: {
+                'content-type': 'application/json',
+                'accept': 'application/json',
+              },
+            ),
           );
         },
       );
