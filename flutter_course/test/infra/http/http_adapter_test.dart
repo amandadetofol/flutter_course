@@ -26,7 +26,11 @@ class HttpAdapter {
       body: (body != null) ? jsonEncode(body) : null,
     );
 
-    return response.body.isEmpty ? null : jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    } else {
+      return null;
+    }
   }
 }
 
@@ -54,18 +58,27 @@ void main() {
   group(
     'POST',
     () {
-      test(
-        'Should call post with correct values',
-        () async {
-          when(
+      mock() => when(
             () => client.post(
               any(),
               headers: any(named: 'headers'),
+              body: any(named: 'body'),
             ),
-          ).thenAnswer(
-            (_) async => Response('{}', 200),
           );
 
+      void mockResponse(int statusCode, String body) {
+        mock().thenAnswer(
+          (_) async => Response(body, statusCode),
+        );
+      }
+
+      setUp(() {
+        mockResponse(200, '{"any_key":"any_value"}');
+      });
+
+      test(
+        'Should call post with correct values',
+        () async {
           await sut.request(url: url, method: 'post');
 
           verify(
@@ -85,16 +98,6 @@ void main() {
       test(
         'Should call post with body',
         () async {
-          when(
-            () => client.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-            ),
-          ).thenAnswer(
-            (_) async => Response('{}', 200),
-          );
-
           await sut.request(
             url: url,
             method: 'post',
@@ -118,16 +121,6 @@ void main() {
       test(
         'Should call post without body',
         () async {
-          when(
-            () => client.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-            ),
-          ).thenAnswer(
-            (_) async => Response('{}', 200),
-          );
-
           await sut.request(
             url: url,
             method: 'post',
@@ -150,16 +143,6 @@ void main() {
       test(
         'Should return data when post return 200',
         () async {
-          when(
-            () => client.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-            ),
-          ).thenAnswer(
-            (_) async => Response('{"any_key":"any_value"}', 200),
-          );
-
           final response = await sut.request(
             url: url,
             method: 'post',
@@ -172,15 +155,7 @@ void main() {
       test(
         'Should return null when post return 200 with no data',
         () async {
-          when(
-            () => client.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-            ),
-          ).thenAnswer(
-            (_) async => Response('', 200),
-          );
+          mockResponse(200, '');
 
           final response = await sut.request(
             url: url,
@@ -192,24 +167,30 @@ void main() {
       );
 
       test(
-        'Should return data when post return 204',
+        'Should return null when post return 204',
         () async {
-          when(
-            () => client.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-            ),
-          ).thenAnswer(
-            (_) async => Response('{"any_key":"any_value"}', 204),
-          );
+          mockResponse(204, '');
 
           final response = await sut.request(
             url: url,
             method: 'post',
           );
 
-          expect(response, body);
+          expect(response, null);
+        },
+      );
+
+      test(
+        'Should return null when post return 204 with data',
+        () async {
+          mockResponse(204, '{"any_key": "any_value"}');
+
+          final response = await sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(response, null);
         },
       );
     },
