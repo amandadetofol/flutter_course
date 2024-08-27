@@ -1,3 +1,4 @@
+import 'package:flutter_course/lib/data/http/http.dart';
 import 'package:flutter_course/lib/infra/http.dart';
 import 'package:http/http.dart';
 import 'package:test/test.dart';
@@ -161,6 +162,20 @@ void main() {
           );
 
           expect(response, null);
+        },
+      );
+
+      test(
+        'Should return badrequest error when post return 400',
+        () async {
+          mockResponse(400, '');
+
+          final future = sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(future, throwsA(HttpError.badRequest));
         },
       );
     },

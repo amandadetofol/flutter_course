@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_course/lib/data/http/http_error.dart';
 import 'package:http/http.dart';
 
 class HttpAdapter {
@@ -27,10 +28,13 @@ class HttpAdapter {
   }
 
   Map? _handleResponse({required Response response}) {
-    if (response.statusCode == 200) {
-      return response.body.isEmpty ? null : jsonDecode(response.body);
-    } else {
-      return null;
+    switch (response.statusCode) {
+      case 200:
+        return response.body.isEmpty ? null : jsonDecode(response.body);
+      case 400:
+        throw HttpError.badRequest;
+      default:
+        return null;
     }
   }
 }
