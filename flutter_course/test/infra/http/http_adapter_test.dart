@@ -166,9 +166,23 @@ void main() {
       );
 
       test(
-        'Should return badrequest error when post return 400',
+        'Should return badrequest error when post return 400 with empty body',
         () async {
           mockResponse(400, '');
+
+          final future = sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(future, throwsA(HttpError.badRequest));
+        },
+      );
+
+      test(
+        'Should return badrequest error when post return 400 with empty body',
+        () async {
+          mockResponse(400, '{"any_key": "any_value"}');
 
           final future = sut.request(
             url: url,
