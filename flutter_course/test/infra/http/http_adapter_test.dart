@@ -175,7 +175,10 @@ void main() {
             method: 'post',
           );
 
-          expect(future, throwsA(HttpError.badRequest));
+          expect(
+            future,
+            throwsA(HttpError.badRequest),
+          );
         },
       );
 
@@ -189,7 +192,78 @@ void main() {
             method: 'post',
           );
 
-          expect(future, throwsA(HttpError.badRequest));
+          expect(
+            future,
+            throwsA(HttpError.badRequest),
+          );
+        },
+      );
+
+      test(
+        'Should return server error when post return 500',
+        () async {
+          mockResponse(500, '{"any_key": "any_value"}');
+
+          final future = sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(
+            future,
+            throwsA(HttpError.serverError),
+          );
+        },
+      );
+
+      test(
+        'Should return unauthorized error when post return 401',
+        () async {
+          mockResponse(401, '');
+
+          final future = sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(
+            future,
+            throwsA(HttpError.unauthorized),
+          );
+        },
+      );
+
+      test(
+        'Should return forbidden error when post return 403',
+        () async {
+          mockResponse(403, '');
+
+          final future = sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(
+            future,
+            throwsA(HttpError.forbidden),
+          );
+        },
+      );
+
+      test(
+        'Should return not found error when post return 404',
+        () async {
+          mockResponse(404, '');
+
+          final future = sut.request(
+            url: url,
+            method: 'post',
+          );
+
+          expect(
+            future,
+            throwsA(HttpError.notFound),
+          );
         },
       );
     },
