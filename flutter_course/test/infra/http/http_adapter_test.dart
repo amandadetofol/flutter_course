@@ -268,4 +268,43 @@ void main() {
       );
     },
   );
+
+  group(
+    'shared ',
+    () {
+      mock() => when(
+            () => client.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          );
+
+      void mockError() {
+        mock().thenAnswer(
+          (_) async => Response('', 500),
+        );
+      }
+
+      test(
+        'Should throw server error if invalid method is provided',
+        () async {
+          final future = sut.request(url: url, method: 'invalid_method');
+
+          expect(future, throwsA(HttpError.serverError));
+        },
+      );
+
+      test(
+        'Should throw server error if post throws',
+        () async {
+          mockError();
+
+          final future = sut.request(url: url, method: 'invalid_method');
+
+          expect(future, throwsA(HttpError.serverError));
+        },
+      );
+    },
+  );
 }

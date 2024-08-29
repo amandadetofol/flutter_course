@@ -13,19 +13,26 @@ class HttpAdapter {
     required String method,
     Map? body,
   }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json'
-    };
-
-    final response = await client.post(
-      Uri.parse(url),
-      headers: headers,
-      body: (body != null) ? jsonEncode(body) : null,
-    );
-
-    return _handleResponse(response: response);
+    if (isValidMethod(method)) {
+      final headers = {
+        'content-type': 'application/json',
+        'accept': 'application/json'
+      };
+      try {
+        final response = await client.post(
+          Uri.parse(url),
+          headers: headers,
+          body: (body != null) ? jsonEncode(body) : null,
+        );
+        return _handleResponse(response: response);
+      } catch (e) {
+        throw HttpError.serverError;
+      }
+    }
+    throw HttpError.serverError;
   }
+
+  bool isValidMethod(String method) => method == 'post';
 
   Map? _handleResponse({required Response response}) {
     switch (response.statusCode) {
