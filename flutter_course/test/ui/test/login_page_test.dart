@@ -22,6 +22,12 @@ void main() {
         matching: find.byType(Text),
       );
 
+      final button = tester.widget<ElevatedButton>(
+        find.byType(ElevatedButton),
+      );
+
+      expect(button.onPressed, null);
+
       expect(
         emailTextChildren,
         findsOneWidget,

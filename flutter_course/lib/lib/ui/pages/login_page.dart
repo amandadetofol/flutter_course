@@ -43,11 +43,11 @@ class LoginPage extends StatelessWidget {
                         bottom: 8,
                       ),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: null,
                         child: Text('Entrar'.toUpperCase()),
                       ),
                     ),
-                    ElevatedButton(
+                    TextButton(
                       onPressed: () {},
                       child: Text('Criar conta'.toUpperCase()),
                     ),
