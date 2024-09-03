@@ -53,7 +53,21 @@ class App extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
+      home: LoginPage(
+        presenter: LoginPresenterStream(),
+      ),
     );
+  }
+}
+
+final class LoginPresenterStream implements LoginPresenter {
+  @override
+  void validateEmail(String email) {
+    // TODO: implement validateEmail
+  }
+
+   @override
+  void validatePassword(String password) {
+    // TODO: implement validateEmail
   }
 }
