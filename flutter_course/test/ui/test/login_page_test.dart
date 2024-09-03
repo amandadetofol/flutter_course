@@ -3,14 +3,18 @@ import 'package:flutter_course/lib/ui/pages/pages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  Future<void> loadPage(WidgetTester tester) async {
+    const loginPage = MaterialApp(
+      home: LoginPage(),
+    );
+
+    await tester.pumpWidget(loginPage);
+  }
+
   testWidgets(
     'Should load with correct initial state',
     (WidgetTester tester) async {
-      const loginPage = MaterialApp(
-        home: LoginPage(),
-      );
-
-      await tester.pumpWidget(loginPage);
+      await loadPage(tester);
 
       final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('E-mail'),
@@ -41,6 +45,13 @@ void main() {
         reason:
             'When a TextFormField has only text child, means it has no errors, since one of the childs is always the hint text',
       );
+    },
+  );
+
+  testWidgets(
+    'Should call validate with correct values',
+    (WidgetTester tester) async {
+      await loadPage(tester);
     },
   );
 }
