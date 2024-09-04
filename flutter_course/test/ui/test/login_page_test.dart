@@ -252,4 +252,24 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Should disable form button when form if valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(false);
+
+      await tester.pumpAndSettle();
+
+      final button = tester.widget<ElevatedButton>(
+        find.byType(ElevatedButton),
+      );
+
+      expect(
+        button.onPressed,
+        null,
+      );
+    },
+  );
 }
