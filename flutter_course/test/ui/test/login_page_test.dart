@@ -11,18 +11,24 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {}
 void main() {
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
+  late StreamController<bool> isFormValidController;
 
   late LoginPresenter presenter;
 
   setUp(() {
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
+    isFormValidController = StreamController<bool>();
     presenter = LoginPresenterSpy();
 
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
+
     when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
+
+    when(() => presenter.isValidFormStream)
+        .thenAnswer((_) => isFormValidController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -40,6 +46,7 @@ void main() {
   tearDown(() {
     emailErrorController.close();
     passwordErrorController.close();
+    isFormValidController.close();
   });
 
   testWidgets(
@@ -222,6 +229,26 @@ void main() {
       expect(
         emailTextChildren,
         findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should enable form button when form if valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(true);
+
+      await tester.pumpAndSettle();
+
+      final button = tester.widget<ElevatedButton>(
+        find.byType(ElevatedButton),
+      );
+
+      expect(
+        button.onPressed,
+        isNotNull,
       );
     },
   );

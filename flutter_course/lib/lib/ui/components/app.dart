@@ -64,25 +64,24 @@ class App extends StatelessWidget {
 }
 
 class LoginPresenterImpl implements LoginPresenter {
-  @override
-  // TODO: implement emailErrorStream
-  Stream<String> get emailErrorStream => _emailErrorController.stream;
+  final StreamController<bool> _form = StreamController<bool>();
+  final StreamController<String> _passwordErrorController =
+      StreamController<String>();
   final StreamController<String> _emailErrorController =
       StreamController<String>();
 
   @override
-  void validateEmail(String email) {
-    // TODO: implement validateEmail
-  }
+  Stream<String?> get passwordErrorStream => _passwordErrorController.stream;
 
   @override
-  void validatePassword(String password) {
-    // TODO: implement validatePassword
-  }
+  Stream<String> get emailErrorStream => _emailErrorController.stream;
 
   @override
-  final StreamController<String> _passwordErrorController =
-      StreamController<String>();
-  Stream<String?> get passwordErrorStream =>
-      throw _passwordErrorController.stream;
+  Stream<bool> get isValidFormStream => _form.stream;
+
+  @override
+  void validateEmail(String email) {}
+
+  @override
+  void validatePassword(String password) {}
 }
