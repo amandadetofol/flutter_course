@@ -183,4 +183,46 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Should present no error when password is valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      passwordErrorController.add('');
+
+      await tester.pumpAndSettle();
+
+      final emailTextChildren = find.descendant(
+        of: find.bySemanticsLabel('Senha'),
+        matching: find.byType(Text),
+      );
+
+      expect(
+        emailTextChildren,
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present no error when password is valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      passwordErrorController.add('');
+
+      await tester.pumpAndSettle();
+
+      final emailTextChildren = find.descendant(
+        of: find.bySemanticsLabel('Senha'),
+        matching: find.byType(Text),
+      );
+
+      expect(
+        emailTextChildren,
+        findsOneWidget,
+      );
+    },
+  );
 }
