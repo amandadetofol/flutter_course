@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/pages/pages.dart';
@@ -7,17 +9,31 @@ import 'package:mocktail/mocktail.dart';
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
-  LoginPresenter presenter = LoginPresenterSpy();
+  late StreamController<String?> emailErrorController;
+  late LoginPresenter presenter;
+
+  setUp(() {
+    emailErrorController = StreamController<String?>();
+    presenter = LoginPresenterSpy();
+    when(() => presenter.emailErrorStream)
+        .thenAnswer((_) => emailErrorController.stream);
+  });
 
   Future<void> loadPage(WidgetTester tester) async {
-    final loginPage = MaterialApp(
-      home: LoginPage(
-        presenter: presenter,
-      ),
+    final loginPage = LoginPage(
+      presenter: presenter,
     );
 
-    await tester.pumpWidget(loginPage);
+    final app = MaterialApp(
+      home: loginPage,
+    );
+
+    await tester.pumpWidget(app);
   }
+
+  tearDown(() {
+    emailErrorController.close();
+  });
 
   testWidgets(
     'Should load with correct initial state',
@@ -68,6 +84,38 @@ void main() {
       final password = faker.internet.password();
       await tester.enterText(find.bySemanticsLabel('Senha'), password);
       verify(() => presenter.validatePassword(password)).called(1);
+    },
+  );
+
+  testWidgets(
+    'Should present error when e-mail is invalid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      emailErrorController.add('any error');
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('any error'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present no error when e-mail is valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      emailErrorController.add(null);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('any error'),
+        findsNothing,
+      );
     },
   );
 }

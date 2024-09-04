@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../pages/pages.dart';
 
@@ -54,20 +57,26 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: LoginPage(
-        presenter: LoginPresenterStream(),
+        presenter: LoginPresenterImpl(),
       ),
     );
   }
 }
 
-final class LoginPresenterStream implements LoginPresenter {
+class LoginPresenterImpl implements LoginPresenter {
+  @override
+  // TODO: implement emailErrorStream
+  Stream<String> get emailErrorStream => _emailErrorController.stream;
+  final StreamController<String> _emailErrorController =
+      StreamController<String>();
+
   @override
   void validateEmail(String email) {
     // TODO: implement validateEmail
   }
 
-   @override
+  @override
   void validatePassword(String password) {
-    // TODO: implement validateEmail
+    // TODO: implement validatePassword
   }
 }
