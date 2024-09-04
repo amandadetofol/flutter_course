@@ -12,6 +12,7 @@ void main() {
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
   late StreamController<bool> isFormValidController;
+  late StreamController<bool> isLoadingController;
 
   late LoginPresenter presenter;
 
@@ -19,6 +20,7 @@ void main() {
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
     isFormValidController = StreamController<bool>();
+    isLoadingController = StreamController<bool>();
     presenter = LoginPresenterSpy();
 
     when(() => presenter.emailErrorStream)
@@ -29,6 +31,9 @@ void main() {
 
     when(() => presenter.isValidFormStream)
         .thenAnswer((_) => isFormValidController.stream);
+
+    when(() => presenter.isLoadingStream)
+        .thenAnswer((_) => isLoadingController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -47,12 +52,17 @@ void main() {
     emailErrorController.close();
     passwordErrorController.close();
     isFormValidController.close();
+    isLoadingController.close();
   });
 
   testWidgets(
     'Should load with correct initial state',
     (WidgetTester tester) async {
       await loadPage(tester);
+
+      isFormValidController.add(false);
+
+      await tester.pumpAndSettle();
 
       final emailTextChildren = find.descendant(
         of: find.bySemanticsLabel('E-mail'),
@@ -68,7 +78,7 @@ void main() {
         find.byType(ElevatedButton),
       );
 
-      expect(button.onPressed, null);
+      expect(button.onPressed, (null));
 
       expect(
         emailTextChildren,
@@ -269,6 +279,36 @@ void main() {
       expect(
         button.onPressed,
         null,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should call authentication on form submit',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(true);
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      verify(() => presenter.auth()).called(1);
+    },
+  );
+
+  testWidgets(
+    'Should present loading',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isLoadingController.add(true);
+
+      await tester.pump(Duration(milliseconds: 100));
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsOneWidget,
       );
     },
   );

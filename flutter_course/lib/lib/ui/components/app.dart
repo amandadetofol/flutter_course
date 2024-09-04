@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mocktail/mocktail.dart';
 
 import '../pages/pages.dart';
 
@@ -65,6 +64,7 @@ class App extends StatelessWidget {
 
 class LoginPresenterImpl implements LoginPresenter {
   final StreamController<bool> _form = StreamController<bool>();
+  final StreamController<bool> _load = StreamController<bool>();
   final StreamController<String> _passwordErrorController =
       StreamController<String>();
   final StreamController<String> _emailErrorController =
@@ -84,4 +84,10 @@ class LoginPresenterImpl implements LoginPresenter {
 
   @override
   void validatePassword(String password) {}
+
+  @override
+  void auth() {}
+
+  @override
+  Stream<bool> get isLoadingStream => _load.stream;
 }
