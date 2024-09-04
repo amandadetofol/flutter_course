@@ -35,20 +35,28 @@ class LoginPage extends StatelessWidget {
                             decoration: InputDecoration(
                                 label: const Text('E-mail'),
                                 icon: const Icon(Icons.email),
-                                errorText: snapshot.data),
+                                errorText: (snapshot.data?.isEmpty == true)
+                                    ? null
+                                    : snapshot.data),
                             keyboardType: TextInputType.emailAddress,
                             onChanged: presenter.validateEmail,
                           );
                         }),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        label: Text('Senha'),
-                        icon: Icon(Icons.lock),
-                      ),
-                      keyboardType: TextInputType.text,
-                      obscureText: true,
-                      onChanged: presenter.validatePassword,
-                    ),
+                    StreamBuilder<String?>(
+                        stream: presenter.passwordErrorStream,
+                        builder: (context, snapshot) {
+                          return TextFormField(
+                            decoration: InputDecoration(
+                                label: const Text('Senha'),
+                                icon: const Icon(Icons.lock),
+                                errorText: (snapshot.data?.isEmpty == true)
+                                    ? null
+                                    : snapshot.data),
+                            keyboardType: TextInputType.text,
+                            obscureText: true,
+                            onChanged: presenter.validatePassword,
+                          );
+                        }),
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 32,

@@ -79,4 +79,10 @@ class LoginPresenterImpl implements LoginPresenter {
   void validatePassword(String password) {
     // TODO: implement validatePassword
   }
+
+  @override
+  final StreamController<String> _passwordErrorController =
+      StreamController<String>();
+  Stream<String?> get passwordErrorStream =>
+      throw _passwordErrorController.stream;
 }

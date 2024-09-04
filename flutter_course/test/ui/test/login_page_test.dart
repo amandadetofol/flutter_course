@@ -10,13 +10,19 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
   late StreamController<String?> emailErrorController;
+  late StreamController<String?> passwordErrorController;
+
   late LoginPresenter presenter;
 
   setUp(() {
     emailErrorController = StreamController<String?>();
+    passwordErrorController = StreamController<String?>();
     presenter = LoginPresenterSpy();
+
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
+    when(() => presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordErrorController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -33,6 +39,7 @@ void main() {
 
   tearDown(() {
     emailErrorController.close();
+    passwordErrorController.close();
   });
 
   testWidgets(
@@ -112,9 +119,67 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      final emailTextChildren = find.descendant(
+        of: find.bySemanticsLabel('E-mail'),
+        matching: find.byType(Text),
+      );
+
+      expect(
+        emailTextChildren,
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present error when password is invalid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      passwordErrorController.add('any error');
+
+      await tester.pumpAndSettle();
+
       expect(
         find.text('any error'),
-        findsNothing,
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present error when password is invalid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      passwordErrorController.add('any error');
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('any error'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present no error when password is valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      passwordErrorController.add(null);
+
+      await tester.pumpAndSettle();
+
+      final emailTextChildren = find.descendant(
+        of: find.bySemanticsLabel('Senha'),
+        matching: find.byType(Text),
+      );
+
+      expect(
+        emailTextChildren,
+        findsOneWidget,
       );
     },
   );
