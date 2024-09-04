@@ -312,4 +312,22 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Should hide loading',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isLoadingController.add(true);
+      await tester.pump(Duration(milliseconds: 100));
+
+      isLoadingController.add(false);
+      await tester.pump(Duration(milliseconds: 100));
+
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsNothing,
+      );
+    },
+  );
 }
