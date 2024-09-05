@@ -17,14 +17,16 @@ void main() {
 
   late LoginPresenter presenter;
 
-  setUp(() {
+  void initStreams() {
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
     mainErrorController = StreamController<String?>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
     presenter = LoginPresenterSpy();
+  }
 
+  void mockStreams() {
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
 
@@ -39,6 +41,19 @@ void main() {
 
     when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
+  }
+
+  void closeStreams() {
+    emailErrorController.close();
+    passwordErrorController.close();
+    isFormValidController.close();
+    isLoadingController.close();
+    mainErrorController.close();
+  }
+
+  setUp(() {
+    initStreams();
+    mockStreams();
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -54,11 +69,7 @@ void main() {
   }
 
   tearDown(() {
-    emailErrorController.close();
-    passwordErrorController.close();
-    isFormValidController.close();
-    isLoadingController.close();
-    mainErrorController.close();
+    closeStreams();
   });
 
   testWidgets(

@@ -88,7 +88,7 @@ class LoginPresenterImpl implements LoginPresenter {
   void validatePassword(String password) {}
 
   @override
-  void auth() {}
+  Future<void>? auth() async {}
 
   @override
   Stream<bool> get isLoadingStream => _load.stream;
