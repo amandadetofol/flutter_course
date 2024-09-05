@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/lib/ui/components/error_snackbar.dart';
 
 import '../../components/components.dart';
 import 'login_presenter.dart';
@@ -29,33 +30,12 @@ class _LoginPageState extends State<LoginPage> {
         widget.presenter.isLoadingStream.listen(
           (isLoading) {
             if (isLoading) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return const SimpleDialog(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Aguarde...',
-                            textAlign: TextAlign.center,
-                          )
-                        ],
-                      ),
-                    ],
-                  );
-                },
+              showSpinnerDialog(
+                context,
+                "Aguarde...",
               );
             } else {
-              if (Navigator.canPop(context)) {
-                Navigator.of(context).pop();
-              }
+              hideDialog(context);
             }
           },
         );
@@ -63,12 +43,9 @@ class _LoginPageState extends State<LoginPage> {
         widget.presenter.mainErrorStream.listen(
           (errorMesage) {
             if (errorMesage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(errorMesage),
-                  duration: const Duration(seconds: 5),
-                  backgroundColor: Colors.red[900],
-                ),
+              showErrorSnackBar(
+                context,
+                errorMesage,
               );
             }
           },
