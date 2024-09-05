@@ -11,6 +11,7 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {}
 void main() {
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
+  late StreamController<String?> mainErrorController;
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
 
@@ -19,6 +20,7 @@ void main() {
   setUp(() {
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
+    mainErrorController = StreamController<String?>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
     presenter = LoginPresenterSpy();
@@ -34,6 +36,9 @@ void main() {
 
     when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
+
+    when(() => presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
   });
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -53,6 +58,7 @@ void main() {
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
   });
 
   testWidgets(
@@ -305,7 +311,7 @@ void main() {
 
       isLoadingController.add(true);
 
-      await tester.pump(Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
       expect(
         find.byType(CircularProgressIndicator),
         findsOneWidget,
@@ -319,15 +325,27 @@ void main() {
       await loadPage(tester);
 
       isLoadingController.add(true);
-      await tester.pump(Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
 
       isLoadingController.add(false);
-      await tester.pump(Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(
         find.byType(CircularProgressIndicator),
         findsNothing,
       );
+    },
+  );
+
+  testWidgets(
+    'Should show error message ',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      mainErrorController.add('main error');
+      await tester.pumpAndSettle();
+
+      expect(find.text('main error'), findsOneWidget);
     },
   );
 }

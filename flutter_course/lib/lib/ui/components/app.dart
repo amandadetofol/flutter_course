@@ -67,6 +67,8 @@ class LoginPresenterImpl implements LoginPresenter {
   final StreamController<bool> _load = StreamController<bool>();
   final StreamController<String> _passwordErrorController =
       StreamController<String>();
+  final StreamController<String> _mainErrorController =
+      StreamController<String>();
   final StreamController<String> _emailErrorController =
       StreamController<String>();
 
@@ -90,4 +92,7 @@ class LoginPresenterImpl implements LoginPresenter {
 
   @override
   Stream<bool> get isLoadingStream => _load.stream;
+
+  @override
+  Stream<String?> get mainErrorStream => _mainErrorController.stream;
 }
