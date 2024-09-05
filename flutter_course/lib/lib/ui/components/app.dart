@@ -95,4 +95,9 @@ class LoginPresenterImpl implements LoginPresenter {
 
   @override
   Stream<String?> get mainErrorStream => _mainErrorController.stream;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+  }
 }

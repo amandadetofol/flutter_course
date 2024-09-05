@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../components/components.dart';
 import 'login_presenter.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   final LoginPresenter presenter;
 
   const LoginPage({
@@ -12,10 +12,21 @@ class LoginPage extends StatelessWidget {
   });
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  void dispose() {
+    super.dispose();
+    widget.presenter.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (context) {
-        presenter.isLoadingStream.listen(
+        widget.presenter.isLoadingStream.listen(
           (isLoading) {
             if (isLoading) {
               showDialog(
@@ -49,7 +60,7 @@ class LoginPage extends StatelessWidget {
           },
         );
 
-        presenter.mainErrorStream.listen(
+        widget.presenter.mainErrorStream.listen(
           (errorMesage) {
             if (errorMesage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -78,7 +89,7 @@ class LoginPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       StreamBuilder<String?>(
-                          stream: presenter.emailErrorStream,
+                          stream: widget.presenter.emailErrorStream,
                           builder: (context, snapshot) {
                             return TextFormField(
                               decoration: InputDecoration(
@@ -88,11 +99,11 @@ class LoginPage extends StatelessWidget {
                                       ? null
                                       : snapshot.data),
                               keyboardType: TextInputType.emailAddress,
-                              onChanged: presenter.validateEmail,
+                              onChanged: widget.presenter.validateEmail,
                             );
                           }),
                       StreamBuilder<String?>(
-                          stream: presenter.passwordErrorStream,
+                          stream: widget.presenter.passwordErrorStream,
                           builder: (context, snapshot) {
                             return TextFormField(
                               decoration: InputDecoration(
@@ -103,7 +114,7 @@ class LoginPage extends StatelessWidget {
                                       : snapshot.data),
                               keyboardType: TextInputType.text,
                               obscureText: true,
-                              onChanged: presenter.validatePassword,
+                              onChanged: widget.presenter.validatePassword,
                             );
                           }),
                       Padding(
@@ -112,13 +123,13 @@ class LoginPage extends StatelessWidget {
                           bottom: 8,
                         ),
                         child: StreamBuilder<bool>(
-                            stream: presenter.isValidFormStream,
+                            stream: widget.presenter.isValidFormStream,
                             builder: (context, snapshot) {
                               return ElevatedButton(
                                 onPressed: (snapshot.data == false)
                                     ? null
                                     : () {
-                                        presenter.auth();
+                                        widget.presenter.auth();
                                       },
                                 child: Text('Entrar'.toUpperCase()),
                               );
