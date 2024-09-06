@@ -17,6 +17,7 @@ dependencies:
   faker: 
   http: 
   mocktail: 
+  provider: 
 
 dev_dependencies:
   flutter_test:
