@@ -8,9 +8,10 @@ class ValidationSpy extends Mock implements Validation {}
 void main() {
   late Validation validation;
   late String email;
+  late String password;
   late StreamLoginPresenter sut;
 
-  mockValidation(String field, String value) {
+  mockValidation(String field, String? value) {
     when(
       () => validation.validate(
         field: field,
@@ -22,6 +23,7 @@ void main() {
   setUp(() {
     validation = ValidationSpy();
     email = faker.internet.email();
+    password = faker.internet.password();
     sut = StreamLoginPresenter(validation: validation);
   });
 
@@ -52,6 +54,140 @@ void main() {
           expectAsync1(
             (error) {
               expect(error, 'error');
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    },
+  );
+
+  test(
+    'Should emit null if validation succed',
+    () {
+      mockValidation('email', null);
+
+      sut.validateEmail(email);
+      sut.validateEmail(email);
+
+      sut.emailErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, null);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    },
+  );
+
+  test(
+    'Should call validation with correct password',
+    () {
+      sut.validatePassword(password);
+
+      verify(
+        () => validation.validate(
+          field: 'password',
+          value: password,
+        ),
+      ).called(1);
+    },
+  );
+
+  test(
+    'Should emit null if validation succed',
+    () {
+      mockValidation('email', null);
+
+      sut.validateEmail(email);
+      sut.validateEmail(email);
+
+      sut.emailErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, null);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    },
+  );
+
+  test(
+    'Should emit password error if validation fails',
+    () {
+      mockValidation('password', 'error');
+
+      sut.validatePassword(password);
+      sut.validatePassword(password);
+
+      sut.passwordErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, 'error');
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    },
+  );
+
+  test(
+    'Should emit null if validation succed',
+    () {
+      mockValidation('password', null);
+
+      sut.validatePassword(password);
+      sut.validatePassword(password);
+
+      sut.passwordErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, null);
             },
           );
         },
