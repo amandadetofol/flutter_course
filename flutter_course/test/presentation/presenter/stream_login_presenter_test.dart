@@ -204,4 +204,44 @@ void main() {
       );
     },
   );
+
+  test(
+    'Should emit null if validation succed',
+    () {
+      mockValidation('email', 'error');
+
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      sut.emailErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, 'error');
+            },
+          );
+        },
+      );
+
+      sut.passwordErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, null);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    },
+  );
 }
