@@ -69,27 +69,14 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        EmailInput(),
-                        PasswordInput(),
-                        Padding(
-                          padding: const EdgeInsets.only(
+                        const EmailInput(),
+                        const PasswordInput(),
+                        const Padding(
+                          padding: EdgeInsets.only(
                             top: 32,
                             bottom: 8,
                           ),
-                          child: StreamBuilder<bool>(
-                              stream: widget.presenter.isValidFormStream,
-                              builder: (context, snapshot) {
-                                return ElevatedButton(
-                                  onPressed: (snapshot.data == false)
-                                      ? null
-                                      : () {
-                                          widget.presenter.auth();
-                                        },
-                                  child: Text(
-                                    'Entrar'.toUpperCase(),
-                                  ),
-                                );
-                              }),
+                          child: SignInButton(),
                         ),
                         TextButton(
                           onPressed: () {},
