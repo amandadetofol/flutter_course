@@ -1,44 +1,9 @@
-import 'dart:async';
-
 import 'package:faker/faker.dart';
+import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class ValidationSpy extends Mock implements Validation {}
-
-class LoginState {
-  String? emailError;
-}
-
-class StreamLoginPresenter {
-  final Validation validation;
-  final _controller = StreamController<LoginState>.broadcast();
-
-  final _state = LoginState();
-
-  Stream<String?> get emailErrorStream => _controller.stream.map(
-        (state) => state.emailError,
-      );
-
-  StreamLoginPresenter({
-    required this.validation,
-  });
-
-  void validateEmail(String email) {
-    _state.emailError = validation.validate(
-      field: 'email',
-      value: email,
-    );
-    _controller.add(_state);
-  }
-}
-
-abstract class Validation {
-  String? validate({
-    String field,
-    String value,
-  });
-}
 
 void main() {
   late Validation validation;
@@ -79,12 +44,28 @@ void main() {
     () {
       mockValidation('email', 'error');
 
-      expectLater(
-        sut.emailErrorStream,
-        emits('error'),
+      sut.validateEmail(email);
+      sut.validateEmail(email);
+
+      sut.emailErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, 'error');
+            },
+          );
+        },
       );
 
-      sut.validateEmail(email);
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
     },
   );
 }
