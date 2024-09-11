@@ -35,6 +35,7 @@ class StreamLoginPresenter {
       field: 'email',
       value: email,
     );
+    _state.email = email;
     _controller.add(_state);
   }
 
@@ -43,12 +44,20 @@ class StreamLoginPresenter {
       field: 'password',
       value: password,
     );
+    _state.password = password;
     _controller.add(_state);
   }
 }
 
 class LoginState {
+  String? email;
+  String? password;
   String? emailError;
   String? passwordError;
-  bool? get isFormValid => false;
+
+  bool? get isFormValid =>
+      emailError == null &&
+      passwordError == null &&
+      (email?.isNotEmpty ?? false) &&
+      (password?.isNotEmpty ?? false);
 }

@@ -244,4 +244,24 @@ void main() {
       );
     },
   );
+
+  test(
+    'Should emit true in formValidation if validation succeeds',
+    () async {
+      final emailError = expectLater(sut.emailErrorStream, emits(null));
+      final passwordError = expectLater(sut.passwordErrorStream, emits(null));
+      final formValid =
+          expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
+
+      sut.validateEmail(email);
+      await Future.wait([emailError]);
+      sut.validatePassword(password);
+
+      await Future.wait([
+        passwordError,
+        formValid,
+      ]);
+    },
+    timeout: const Timeout(Duration(seconds: 5)),
+  );
 }
