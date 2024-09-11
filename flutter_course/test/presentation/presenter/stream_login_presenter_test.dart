@@ -1,15 +1,21 @@
 import 'package:faker/faker.dart';
+import 'package:flutter_course/lib/domain/entities/account_entity.dart';
+import 'package:flutter_course/lib/domain/helpers/helpers.dart';
+import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class AuthenticationSpy extends Mock implements Authentication {}
+
 void main() {
   late Validation validation;
   late String email;
   late String password;
   late StreamLoginPresenter sut;
+  late Authentication authentication;
 
   mockValidation(String field, String? value) {
     when(
@@ -20,11 +26,41 @@ void main() {
     ).thenReturn(value);
   }
 
+  mockAuthentication() {
+    when(
+      () => authentication.auth(
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer(
+      (_) async => AccountEntity(
+        token: faker.guid.guid(),
+      ),
+    );
+  }
+
+  mockAuthenticationError(DomainError error) {
+    when(
+      () => authentication.auth(
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenThrow(error);
+  }
+
   setUp(() {
+    registerFallbackValue(const AuthenticationParameters(
+      email: '',
+      secret: '',
+    ));
+
     validation = ValidationSpy();
+    authentication = AuthenticationSpy();
     email = faker.internet.email();
     password = faker.internet.password();
-    sut = StreamLoginPresenter(validation: validation);
+    sut = StreamLoginPresenter(
+      authentication,
+      validation: validation,
+    );
+    mockAuthentication();
   });
 
   test(
@@ -263,5 +299,68 @@ void main() {
       ]);
     },
     timeout: const Timeout(Duration(seconds: 5)),
+  );
+
+  test(
+    'Should call authentication with correct values',
+    () async {
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      await sut.auth();
+
+      verify(
+        () => authentication.auth(
+          parameters: AuthenticationParameters(
+            email: email,
+            secret: password,
+          ),
+        ),
+      ).called(1);
+    },
+  );
+
+  test(
+    'Should emit correct events on authentication success',
+    () async {
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      final loadingPresentation =
+          expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      await sut.auth();
+
+      await Future.wait([loadingPresentation]);
+    },
+  );
+
+  test(
+    'Should emit correct events on invalid credentials error',
+    () async {
+      mockAuthenticationError(DomainError.invalidCredentials);
+
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      final loadingPresentation =
+          expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
+      sut.emailErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, 'Credenciais inválidas');
+            },
+          );
+        },
+      );
+
+      await sut.auth();
+
+      await Future.wait([
+        loadingPresentation,
+      ]);
+    },
   );
 }

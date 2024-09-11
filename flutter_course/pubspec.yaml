@@ -18,6 +18,7 @@ dependencies:
   http: 
   mocktail: 
   provider: 
+  equatable: 
 
 dev_dependencies:
   flutter_test:

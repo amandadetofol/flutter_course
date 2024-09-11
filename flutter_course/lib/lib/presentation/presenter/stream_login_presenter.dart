@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter_course/lib/domain/usecases/usecases.dart';
+
 import 'protocols/validation.dart';
 
 class StreamLoginPresenter {
   final Validation validation;
-  final _controller = StreamController<LoginState>.broadcast();
+  final Authentication authentication;
 
+  final _controller = StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
   Stream<String?> get emailErrorStream => _controller.stream
@@ -20,13 +23,20 @@ class StreamLoginPresenter {
       )
       .distinct();
 
+  Stream<bool?> get isLoadingStream => _controller.stream
+      .map(
+        (state) => state.isLoading,
+      )
+      .distinct();
+
   Stream<String?> get passwordErrorStream => _controller.stream
       .map(
         (state) => state.passwordError,
       )
       .distinct();
 
-  StreamLoginPresenter({
+  StreamLoginPresenter(
+    this.authentication, {
     required this.validation,
   });
 
@@ -47,6 +57,23 @@ class StreamLoginPresenter {
     _state.password = password;
     _controller.add(_state);
   }
+
+  Future<void> auth() async {
+    _state.isLoading = true;
+    _controller.add(_state);
+
+    try {
+      await authentication.auth(
+        parameters: AuthenticationParameters(
+          email: _state.email ?? '',
+          secret: _state.password ?? '',
+        ),
+      );
+    } catch (error) {}
+
+    _state.isLoading = false;
+    _controller.add(_state);
+  }
 }
 
 class LoginState {
@@ -54,6 +81,7 @@ class LoginState {
   String? password;
   String? emailError;
   String? passwordError;
+  bool? isLoading;
 
   bool? get isFormValid =>
       emailError == null &&
