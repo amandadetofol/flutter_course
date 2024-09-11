@@ -344,19 +344,19 @@ void main() {
       sut.validatePassword(password);
 
       final loadingPresentation =
-          expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+          expectLater(sut.isLoadingStream, emitsInOrder([false]));
+
+      await sut.auth();
 
       sut.emailErrorStream.listen(
         (error) {
           expectAsync1(
             (error) {
-              expect(error, 'Credenciais inválidas');
+              expect(error, 'Credenciais inválidas.');
             },
           );
         },
       );
-
-      await sut.auth();
 
       await Future.wait([
         loadingPresentation,

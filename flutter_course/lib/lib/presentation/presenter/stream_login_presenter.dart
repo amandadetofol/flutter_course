@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_course/lib/domain/helpers/helpers.dart';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 
 import 'protocols/validation.dart';
@@ -32,6 +33,12 @@ class StreamLoginPresenter {
   Stream<String?> get passwordErrorStream => _controller.stream
       .map(
         (state) => state.passwordError,
+      )
+      .distinct();
+
+  Stream<String?> get mainErrorStream => _controller.stream
+      .map(
+        (state) => state.mainError,
       )
       .distinct();
 
@@ -69,7 +76,9 @@ class StreamLoginPresenter {
           secret: _state.password ?? '',
         ),
       );
-    } catch (error) {}
+    } on DomainError catch (error) {
+      _state.mainError = error.description;
+    }
 
     _state.isLoading = false;
     _controller.add(_state);
@@ -82,6 +91,7 @@ class LoginState {
   String? emailError;
   String? passwordError;
   bool? isLoading;
+  String? mainError;
 
   bool? get isFormValid =>
       emailError == null &&
