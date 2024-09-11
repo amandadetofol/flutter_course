@@ -344,7 +344,7 @@ void main() {
       sut.validatePassword(password);
 
       final loadingPresentation =
-          expectLater(sut.isLoadingStream, emitsInOrder([false]));
+          expectLater(sut.isLoadingStream, emits(false));
 
       await sut.auth();
 
@@ -353,6 +353,35 @@ void main() {
           expectAsync1(
             (error) {
               expect(error, 'Credenciais inválidas.');
+            },
+          );
+        },
+      );
+
+      await Future.wait([
+        loadingPresentation,
+      ]);
+    },
+  );
+
+  test(
+    'Should emit correct events on unexpected error',
+    () async {
+      mockAuthenticationError(DomainError.unexpected);
+
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      final loadingPresentation =
+          expectLater(sut.isLoadingStream, emits(false));
+
+      await sut.auth();
+
+      sut.emailErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, 'Algo errado aconteceu.');
             },
           );
         },
