@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 
+import '../../domain/helpers/domain_error.dart';
 import '../../ui/pages/pages.dart';
 import 'protocols/validation.dart';
 
