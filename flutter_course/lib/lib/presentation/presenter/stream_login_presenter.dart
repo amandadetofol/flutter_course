@@ -1,41 +1,45 @@
 import 'dart:async';
 
-import 'package:flutter_course/lib/domain/helpers/helpers.dart';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 
+import '../../ui/pages/pages.dart';
 import 'protocols/validation.dart';
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
 
   final _controller = StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
+  @override
   Stream<String?> get emailErrorStream => _controller.stream
       .map(
         (state) => state.emailError,
       )
       .distinct();
 
+  @override
   Stream<bool?> get isFormValidStream => _controller.stream
       .map(
         (state) => state.isFormValid,
       )
       .distinct();
 
+  @override
   Stream<bool?> get isLoadingStream => _controller.stream
       .map(
         (state) => state.isLoading,
       )
       .distinct();
 
+  @override
   Stream<String?> get passwordErrorStream => _controller.stream
       .map(
         (state) => state.passwordError,
       )
       .distinct();
-
+  @override
   Stream<String?> get mainErrorStream => _controller.stream
       .map(
         (state) => state.mainError,
@@ -47,6 +51,7 @@ class StreamLoginPresenter {
     required this.validation,
   });
 
+  @override
   void validateEmail(String email) {
     _state.emailError = validation.validate(
       field: 'email',
@@ -56,6 +61,7 @@ class StreamLoginPresenter {
     _controller.add(_state);
   }
 
+  @override
   void validatePassword(String password) {
     _state.passwordError = validation.validate(
       field: 'password',
@@ -65,6 +71,7 @@ class StreamLoginPresenter {
     _controller.add(_state);
   }
 
+  @override
   Future<void> auth() async {
     _state.isLoading = true;
     _controller.add(_state);
@@ -82,6 +89,11 @@ class StreamLoginPresenter {
 
     _state.isLoading = false;
     _controller.add(_state);
+  }
+
+  @override
+  void dispose() {
+    _controller.close();
   }
 }
 

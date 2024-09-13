@@ -10,8 +10,8 @@ class SignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final presenter = Provider.of<LoginPresenter>(context);
 
-    return StreamBuilder<bool>(
-      stream: presenter.isValidFormStream,
+    return StreamBuilder<bool?>(
+      stream: presenter.isFormValidStream,
       builder: (context, snapshot) {
         return ElevatedButton(
           onPressed: (snapshot.data == false)

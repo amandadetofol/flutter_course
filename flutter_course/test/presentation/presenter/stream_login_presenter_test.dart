@@ -1,6 +1,6 @@
 import 'package:faker/faker.dart';
-import 'package:flutter_course/lib/domain/entities/account_entity.dart';
-import 'package:flutter_course/lib/domain/helpers/helpers.dart';
+import 'package:flutter_course/lib/domain/entities/entities.dart';
+import 'package:flutter_course/lib/domain/helpers/domain_error.dart';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -389,6 +389,19 @@ void main() {
 
       await Future.wait([
         loadingPresentation,
+      ]);
+    },
+  );
+
+  test(
+    'Should not emit events after dispose',
+    () async {
+      final neverEmits = expectLater(sut.emailErrorStream, emitsDone);
+
+      sut.dispose();
+
+      await Future.wait([
+        neverEmits,
       ]);
     },
   );

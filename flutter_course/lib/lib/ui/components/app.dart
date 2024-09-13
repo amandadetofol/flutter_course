@@ -76,10 +76,10 @@ class LoginPresenterImpl implements LoginPresenter {
   Stream<String?> get passwordErrorStream => _passwordErrorController.stream;
 
   @override
-  Stream<String> get emailErrorStream => _emailErrorController.stream;
+  Stream<String?> get emailErrorStream => _emailErrorController.stream;
 
   @override
-  Stream<bool> get isValidFormStream => _form.stream;
+  Stream<bool?> get isValidFormStream => _form.stream;
 
   @override
   void validateEmail(String email) {}
@@ -91,7 +91,7 @@ class LoginPresenterImpl implements LoginPresenter {
   Future<void>? auth() async {}
 
   @override
-  Stream<bool> get isLoadingStream => _load.stream;
+  Stream<bool?> get isLoadingStream => _load.stream;
 
   @override
   Stream<String?> get mainErrorStream => _mainErrorController.stream;
@@ -100,4 +100,8 @@ class LoginPresenterImpl implements LoginPresenter {
   void dispose() {
     // TODO: implement dispose
   }
+
+  @override
+  // TODO: implement isFormValidStream
+  Stream<bool?> get isFormValidStream => throw UnimplementedError();
 }

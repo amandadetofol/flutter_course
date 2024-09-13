@@ -33,7 +33,7 @@ void main() {
     when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
 
-    when(() => presenter.isValidFormStream)
+    when(() => presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
 
     when(() => presenter.isLoadingStream)
