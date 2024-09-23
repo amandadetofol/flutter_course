@@ -5,17 +5,6 @@ import 'package:mocktail/mocktail.dart';
 
 class FieldValidationSpy extends Mock implements FieldValidation {}
 
-class ValidationComposite implements Validation {
-  final List<FieldValidation> validations;
-
-  ValidationComposite({required this.validations});
-
-  @override
-  String? validate({String? field, String? value}) {
-    return null;
-  }
-}
-
 void main() {
   late FieldValidation validation1;
   late FieldValidation validation2;
@@ -23,7 +12,7 @@ void main() {
   late ValidationComposite sut;
 
   void mockValidation1(String? value) {
-    when(() => validation1.field).thenReturn('any_field');
+    when(() => validation1.field).thenReturn('other_field');
 
     when(
       () => validation1.validate(
@@ -42,7 +31,7 @@ void main() {
   }
 
   void mockValidation3(String? value) {
-    when(() => validation3.field).thenReturn('any_field');
+    when(() => validation3.field).thenReturn('other_field');
     when(
       () => validation3.validate(
         any(),
@@ -74,5 +63,18 @@ void main() {
     );
 
     expect(error, null);
+  });
+
+  test('Should return first error', () {
+    mockValidation1('error 1');
+    mockValidation2('error 2');
+    mockValidation3('error 3');
+
+    final error = sut.validate(
+      field: 'any_field',
+      value: 'any_value',
+    );
+
+    expect(error, 'error 2');
   });
 }
