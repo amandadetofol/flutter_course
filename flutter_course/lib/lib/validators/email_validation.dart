@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import 'field_validation.dart';
 
-class EmailValidation implements FieldValidation {
+class EmailValidation extends Equatable implements FieldValidation {
   @override
   String get field => 'email';
 
@@ -18,4 +20,7 @@ class EmailValidation implements FieldValidation {
 
     return null;
   }
+
+  @override
+  List<Object?> get props => [field];
 }

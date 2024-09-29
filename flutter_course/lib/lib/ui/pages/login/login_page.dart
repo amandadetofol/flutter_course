@@ -55,44 +55,54 @@ class _LoginPageState extends State<LoginPage> {
             },
           );
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const LoginHeader(),
-                Headline01(
-                  text: 'login'.toUpperCase(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Form(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const EmailInput(),
-                        const PasswordInput(),
-                        const Padding(
-                          padding: EdgeInsets.only(
-                            top: 32,
-                            bottom: 8,
-                          ),
-                          child: SignInButton(),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Criar conta'.toUpperCase(),
-                          ),
-                        ),
-                      ],
-                    ),
+          return GestureDetector(
+            onDoubleTap: _hideKeyboard(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const LoginHeader(),
+                  Headline01(
+                    text: 'login'.toUpperCase(),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Form(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const EmailInput(),
+                          const PasswordInput(),
+                          const Padding(
+                            padding: EdgeInsets.only(
+                              top: 32,
+                              bottom: 8,
+                            ),
+                            child: SignInButton(),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Criar conta'.toUpperCase(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         }),
       ),
     );
+  }
+
+  void _hideKeyboard() {
+    final currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 }
