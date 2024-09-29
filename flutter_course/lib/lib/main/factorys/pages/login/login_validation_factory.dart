@@ -1,3 +1,5 @@
+import 'package:flutter_course/lib/main/builders/validation_builder.dart';
+
 import '../../../../validators/validators.dart';
 
 ValidationComposite makeValidators() {
@@ -6,8 +8,7 @@ ValidationComposite makeValidators() {
 
 List<FieldValidation> makeLoginValidations() {
   return [
-    RequiredFieldValidation(field: 'email'),
-    EmailValidation(),
-    RequiredFieldValidation(field: 'senha'),
+    ...ValidationBuilder('email').required().email().build(),
+    ...ValidationBuilder('password').required().build(),
   ];
 }
