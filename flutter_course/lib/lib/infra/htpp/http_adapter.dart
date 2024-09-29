@@ -1,30 +1,36 @@
 import 'dart:convert';
 
+import 'package:flutter_course/lib/data/http/http_client.dart';
 import 'package:flutter_course/lib/data/http/http_error.dart';
 import 'package:http/http.dart';
 
-class HttpAdapter {
+class HttpAdapter implements ClientHttp {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<Map?> request({
-    required String url,
-    required String method,
+  @override
+  Future<Map?>? request({
+    required String? url,
+    required String? method,
     Map? body,
   }) async {
-    if (isValidMethod(method)) {
-      final headers = {
-        'content-type': 'application/json',
-        'accept': 'application/json'
-      };
+    if (method != null && url != null) {
+      if (isValidMethod(method)) {
+        final headers = {
+          'content-type': 'application/json',
+          'accept': 'application/json'
+        };
 
-      final response = await client.post(
-        Uri.parse(url),
-        headers: headers,
-        body: (body != null) ? jsonEncode(body) : null,
-      );
-      return _handleResponse(response: response);
+        final response = await client.post(
+          Uri.parse(url),
+          headers: headers,
+          body: (body != null) ? jsonEncode(body) : null,
+        );
+        return _handleResponse(response: response);
+      } else {
+        throw HttpError.serverError;
+      }
     } else {
       throw HttpError.serverError;
     }

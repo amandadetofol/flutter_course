@@ -14,7 +14,7 @@ class PasswordInput extends StatelessWidget {
       builder: (context, snapshot) {
         return TextFormField(
           decoration: InputDecoration(
-              label: const Text('Senha'),
+              label: const Text('senha'),
               icon: const Icon(Icons.lock),
               errorText:
                   (snapshot.data?.isEmpty == true) ? null : snapshot.data),

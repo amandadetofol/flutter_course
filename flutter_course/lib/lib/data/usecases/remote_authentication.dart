@@ -18,6 +18,7 @@ class RemoteAuthentication implements Authentication {
     required this.method,
   });
 
+  @override
   Future<AccountEntity>? auth(
       {required AuthenticationParameters parameters}) async {
     try {
