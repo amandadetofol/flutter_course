@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           );
 
           return GestureDetector(
-            onDoubleTap: _hideKeyboard(),
+            onDoubleTap: _hideKeyboard,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
