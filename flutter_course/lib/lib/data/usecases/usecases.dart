@@ -1,1 +1,1 @@
-export './authentication.dart';
+export '../usecases/authentication/authentication.dart';
