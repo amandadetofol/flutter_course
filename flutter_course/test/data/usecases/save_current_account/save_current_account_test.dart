@@ -1,7 +1,8 @@
 import 'package:faker/faker.dart';
+import 'package:flutter_course/lib/data/cache/cache.dart';
+import 'package:flutter_course/lib/data/usecases/save_secure_cache_storage/save_secure_cache_stoage_impl.dart';
 import 'package:flutter_course/lib/domain/entities/account_entity.dart';
 import 'package:flutter_course/lib/domain/helpers/helpers.dart';
-import 'package:flutter_course/lib/domain/usecases/save_current_account.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -9,14 +10,21 @@ class SaveSecureCacheStorageSpy extends Mock
     implements SaveSecureCacheStorage {}
 
 void main() {
-  test('Should call SaveSecureCacheStorage with correct values', () async {
-    final token = faker.guid.guid();
-    final account = AccountEntity(token: token);
-    final saveCacheStorage = SaveSecureCacheStorageSpy();
+  late String token;
+  late AccountEntity account;
+  late SaveSecureCacheStorageSpy saveCacheStorage;
+  late LocalSaveCurrentAccount sut;
 
-    final sut = LocalSaveCurrentAccount(
+  setUpAll(() {
+    token = faker.guid.guid();
+    account = AccountEntity(token: token);
+    saveCacheStorage = SaveSecureCacheStorageSpy();
+    sut = LocalSaveCurrentAccount(
       saveCacheStorage: saveCacheStorage,
     );
+  });
+
+  test('Should call SaveSecureCacheStorage with correct values', () async {
     await sut.save(account);
 
     verify(
@@ -29,16 +37,8 @@ void main() {
 
   test('Should throw UnexpectedError if SaveSecureCacheStorage fails',
       () async {
-    final token = faker.guid.guid();
-    final account = AccountEntity(token: token);
-    final saveCacheStorage = SaveSecureCacheStorageSpy();
-
     when(() => saveCacheStorage.saveSecure(key: 'token', value: token))
         .thenThrow(Exception());
-
-    final sut = LocalSaveCurrentAccount(
-      saveCacheStorage: saveCacheStorage,
-    );
 
     final future = sut.save(account);
 
@@ -47,26 +47,4 @@ void main() {
       throwsA(DomainError.unexpected),
     );
   });
-}
-
-class LocalSaveCurrentAccount implements SaveCurrentAccount {
-  final SaveSecureCacheStorage saveCacheStorage;
-
-  LocalSaveCurrentAccount({required this.saveCacheStorage});
-
-  @override
-  Future<void> save(AccountEntity account) async {
-    try {
-      saveCacheStorage.saveSecure(
-        key: 'token',
-        value: account.token,
-      );
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class SaveSecureCacheStorage {
-  void saveSecure({String key, String value});
 }
