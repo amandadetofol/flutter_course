@@ -10,7 +10,9 @@ void main() {
       [
         const RequiredFieldValidation(field: 'email'),
         EmailValidation(),
-        const RequiredFieldValidation(field: 'senha'),
+        const RequiredFieldValidation(field: 'email'),
+        EmailValidation(),
+        const RequiredFieldValidation(field: 'password')
       ],
     );
   });

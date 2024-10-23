@@ -1,3 +1,3 @@
 abstract class SaveSecureCacheStorage {
-  void saveSecure({String key, String value});
+  Future<void> saveSecure(String key, String value);
 }

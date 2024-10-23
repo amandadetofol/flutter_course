@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/pages/pages.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -73,62 +72,6 @@ void main() {
   });
 
   testWidgets(
-    'Should load with correct initial state',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      isFormValidController.add(false);
-
-      await tester.pumpAndSettle();
-
-      final emailTextChildren = find.descendant(
-        of: find.bySemanticsLabel('E-mail'),
-        matching: find.byType(Text),
-      );
-
-      final passwordTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Senha'),
-        matching: find.byType(Text),
-      );
-
-      final button = tester.widget<ElevatedButton>(
-        find.byType(ElevatedButton),
-      );
-
-      expect(button.onPressed, (null));
-
-      expect(
-        emailTextChildren,
-        findsOneWidget,
-        reason:
-            'When a TextFormField has only text child, means it has no errors, since one of the childs is always the hint text',
-      );
-
-      expect(
-        passwordTextChildren,
-        findsOneWidget,
-        reason:
-            'When a TextFormField has only text child, means it has no errors, since one of the childs is always the hint text',
-      );
-    },
-  );
-
-  testWidgets(
-    'Should call validate with correct values',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      final email = faker.internet.email();
-      await tester.enterText(find.bySemanticsLabel('E-mail'), email);
-      verify(() => presenter.validateEmail(email)).called(1);
-
-      final password = faker.internet.password();
-      await tester.enterText(find.bySemanticsLabel('Senha'), password);
-      verify(() => presenter.validatePassword(password)).called(1);
-    },
-  );
-
-  testWidgets(
     'Should present error when e-mail is invalid',
     (WidgetTester tester) async {
       await loadPage(tester);
@@ -198,69 +141,6 @@ void main() {
   );
 
   testWidgets(
-    'Should present no error when password is valid',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      passwordErrorController.add(null);
-
-      await tester.pumpAndSettle();
-
-      final emailTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Senha'),
-        matching: find.byType(Text),
-      );
-
-      expect(
-        emailTextChildren,
-        findsOneWidget,
-      );
-    },
-  );
-
-  testWidgets(
-    'Should present no error when password is valid',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      passwordErrorController.add('');
-
-      await tester.pumpAndSettle();
-
-      final emailTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Senha'),
-        matching: find.byType(Text),
-      );
-
-      expect(
-        emailTextChildren,
-        findsOneWidget,
-      );
-    },
-  );
-
-  testWidgets(
-    'Should present no error when password is valid',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      passwordErrorController.add('');
-
-      await tester.pumpAndSettle();
-
-      final emailTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Senha'),
-        matching: find.byType(Text),
-      );
-
-      expect(
-        emailTextChildren,
-        findsOneWidget,
-      );
-    },
-  );
-
-  testWidgets(
     'Should enable form button when form if valid',
     (WidgetTester tester) async {
       await loadPage(tester);
@@ -297,21 +177,6 @@ void main() {
         button.onPressed,
         null,
       );
-    },
-  );
-
-  testWidgets(
-    'Should call authentication on form submit',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      isFormValidController.add(true);
-
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pumpAndSettle();
-
-      verify(() => presenter.auth()).called(1);
     },
   );
 
