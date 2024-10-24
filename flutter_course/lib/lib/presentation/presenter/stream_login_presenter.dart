@@ -9,6 +9,7 @@ import 'protocols/validation.dart';
 class StreamLoginPresenter implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
+  final SaveCurrentAccount saveCurrentAccount;
 
   final _controller = StreamController<LoginState>.broadcast();
   final _state = LoginState();
@@ -50,6 +51,7 @@ class StreamLoginPresenter implements LoginPresenter {
   StreamLoginPresenter(
     this.authentication, {
     required this.validation,
+    required this.saveCurrentAccount,
   });
 
   @override
@@ -78,17 +80,23 @@ class StreamLoginPresenter implements LoginPresenter {
     _controller.add(_state);
 
     try {
-      await authentication.auth(
+      var accountEntity = await authentication.auth(
         parameters: AuthenticationParameters(
           email: _state.email ?? '',
           secret: _state.password ?? '',
         ),
       );
+      if (accountEntity != null) {
+        await saveCurrentAccount.save(accountEntity);
+      } else {
+        _state.mainError = DomainError.unexpected.description;
+      }
+      _state.isLoading = false;
     } on DomainError catch (error) {
       _state.mainError = error.description;
+      _state.isLoading = false;
     }
 
-    _state.isLoading = false;
     _controller.add(_state);
   }
 

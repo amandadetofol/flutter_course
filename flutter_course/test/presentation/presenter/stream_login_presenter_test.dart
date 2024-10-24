@@ -8,7 +8,11 @@ import 'package:mocktail/mocktail.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
+
 class AuthenticationSpy extends Mock implements Authentication {}
+
+class AccountEntityStuby extends Mock {}
 
 void main() {
   late Validation validation;
@@ -16,6 +20,8 @@ void main() {
   late String password;
   late StreamLoginPresenter sut;
   late Authentication authentication;
+  final String token = faker.guid.guid();
+  late SaveCurrentAccount saveCurrentAccount;
 
   mockValidation(String field, String? value) {
     when(
@@ -26,16 +32,24 @@ void main() {
     ).thenReturn(value);
   }
 
-  mockAuthentication() {
+  mockAuthentication(AccountEntity? entity) {
     when(
       () => authentication.auth(
         parameters: any(named: 'parameters'),
       ),
     ).thenAnswer(
-      (_) async => AccountEntity(
-        token: faker.guid.guid(),
-      ),
+      (_) async =>
+          entity ??
+          AccountEntity(
+            token: token,
+          ),
     );
+  }
+
+  mockSaveCurrentAccount() {
+    when(
+      () => saveCurrentAccount.save(any()),
+    ).thenAnswer((_) async => Future.value());
   }
 
   mockAuthenticationError(DomainError error) {
@@ -52,6 +66,10 @@ void main() {
       secret: '',
     ));
 
+    registerFallbackValue(AccountEntity(token: token));
+
+    saveCurrentAccount = SaveCurrentAccountSpy();
+
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
     email = faker.internet.email();
@@ -59,8 +77,10 @@ void main() {
     sut = StreamLoginPresenter(
       authentication,
       validation: validation,
+      saveCurrentAccount: saveCurrentAccount,
     );
-    mockAuthentication();
+    mockAuthentication(null);
+    mockSaveCurrentAccount();
   });
 
   test(
@@ -315,6 +335,24 @@ void main() {
             email: email,
             secret: password,
           ),
+        ),
+      ).called(1);
+    },
+  );
+
+  test(
+    'Should call saveCurrentAccount with correct AccountEntity',
+    () async {
+      final entity = AccountEntity(token: token);
+      mockAuthentication(entity);
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      await sut.auth();
+
+      verify(
+        () => saveCurrentAccount.save(
+          entity,
         ),
       ).called(1);
     },

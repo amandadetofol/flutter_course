@@ -6,5 +6,6 @@ StreamLoginPresenter makePresenter() {
   return StreamLoginPresenter(
     makeRemoteAuthentication(),
     validation: makeValidators(),
+    saveCurrentAccount: makeSaveCurrentAccount(),
   );
 }
