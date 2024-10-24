@@ -90,8 +90,8 @@ class StreamLoginPresenter implements LoginPresenter {
         await saveCurrentAccount.save(accountEntity);
       } else {
         _state.mainError = DomainError.unexpected.description;
+        _state.isLoading = false;
       }
-      _state.isLoading = false;
     } on DomainError catch (error) {
       _state.mainError = error.description;
       _state.isLoading = false;
