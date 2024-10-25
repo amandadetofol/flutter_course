@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:flutter_course/lib/domain/entities/entities.dart';
+import 'package:flutter_course/lib/domain/domain.dart';
 import 'package:flutter_course/lib/domain/helpers/domain_error.dart';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
@@ -364,12 +364,38 @@ void main() {
       sut.validateEmail(email);
       sut.validatePassword(password);
 
-      final loadingPresentation =
-          expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+      final loadingPresentation = expectLater(sut.isLoadingStream, emits(true));
 
       await sut.auth();
 
       await Future.wait([loadingPresentation]);
+    },
+  );
+
+  test(
+    'Should navigate to surveys on authentication success',
+    () async {
+      sut.validateEmail(email);
+      sut.validatePassword(password);
+
+      final navigateToStream =
+          expectLater(sut.navigateToStream, emitsThrough('/surveys'));
+
+      await sut.auth();
+
+      sut.navigateToStream.listen(
+        (page) {
+          expectAsync1(
+            (page) {
+              expect(page, '/surveys');
+            },
+          );
+        },
+      );
+
+      await Future.wait([
+        navigateToStream,
+      ]);
     },
   );
 

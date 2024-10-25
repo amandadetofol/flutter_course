@@ -26,6 +26,12 @@ class App extends StatelessWidget {
           name: '/login',
           page: () => makeLoginPage(),
         ),
+        GetPage(
+          name: '/surveys',
+          page: () => const Scaffold(
+            body: Text('Enquetes'),
+          ),
+        ),
       ],
     );
   }

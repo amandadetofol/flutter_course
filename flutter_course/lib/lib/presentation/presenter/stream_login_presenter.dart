@@ -15,6 +15,13 @@ class StreamLoginPresenter implements LoginPresenter {
   final _state = LoginState();
 
   @override
+  Stream<String?> get navigateToStream => _controller.stream
+      .map(
+        (state) => state.path,
+      )
+      .distinct();
+
+  @override
   Stream<String?> get emailErrorStream => _controller.stream
       .map(
         (state) => state.emailError,
@@ -88,6 +95,7 @@ class StreamLoginPresenter implements LoginPresenter {
       );
       if (accountEntity != null) {
         await saveCurrentAccount.save(accountEntity);
+        _state.path = '/surveys';
       } else {
         _state.mainError = DomainError.unexpected.description;
         _state.isLoading = false;
@@ -113,6 +121,7 @@ class LoginState {
   String? passwordError;
   bool? isLoading;
   String? mainError;
+  String? path;
 
   bool? get isFormValid =>
       emailError == null &&

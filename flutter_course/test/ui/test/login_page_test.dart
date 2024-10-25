@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/pages/pages.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
@@ -13,6 +14,7 @@ void main() {
   late StreamController<String?> mainErrorController;
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
+  late StreamController<String?> navigateToController;
 
   late LoginPresenter presenter;
 
@@ -22,6 +24,7 @@ void main() {
     mainErrorController = StreamController<String?>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
+    navigateToController = StreamController<String?>.broadcast();
     presenter = LoginPresenterSpy();
   }
 
@@ -40,6 +43,9 @@ void main() {
 
     when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
+
+    when(() => presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
   }
 
   void closeStreams() {
@@ -48,6 +54,7 @@ void main() {
     isFormValidController.close();
     isLoadingController.close();
     mainErrorController.close();
+    navigateToController.close();
   }
 
   setUp(() {
@@ -60,8 +67,16 @@ void main() {
       presenter: presenter,
     );
 
-    final app = MaterialApp(
+    final app = GetMaterialApp(
       home: loginPage,
+      getPages: [
+        GetPage(
+          name: '/surveys',
+          page: () => const Scaffold(
+            body: Text('Enquetes'),
+          ),
+        ),
+      ],
     );
 
     await tester.pumpWidget(app);
@@ -237,6 +252,24 @@ void main() {
           ).called(1)
         },
       );
+    },
+  );
+
+  testWidgets(
+    'Should navigate to page ',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      final routeExpectation =
+          expectLater(presenter.navigateToStream, emits('/surveys'));
+
+      navigateToController.add('/surveys');
+
+      await tester.pumpAndSettle();
+
+      await Future.wait([
+        routeExpectation,
+      ]);
     },
   );
 }

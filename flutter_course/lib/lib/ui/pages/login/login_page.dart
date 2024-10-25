@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/components/error_snackbar.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
@@ -51,6 +52,14 @@ class _LoginPageState extends State<LoginPage> {
                   context,
                   errorMesage,
                 );
+              }
+            },
+          );
+
+          widget.presenter.navigateToStream.listen(
+            (page) {
+              if (page?.isNotEmpty == true) {
+                Get.offAllNamed(page!);
               }
             },
           );
