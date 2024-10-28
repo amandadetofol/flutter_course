@@ -1,7 +1,8 @@
 import 'package:faker/faker.dart';
+import 'package:flutter_course/lib/data/cache/cache.dart';
+import 'package:flutter_course/lib/data/usecases/usecases.dart';
 import 'package:flutter_course/lib/domain/entities/account_entity.dart';
 import 'package:flutter_course/lib/domain/helpers/helpers.dart';
-import 'package:flutter_course/lib/domain/usecases/load_current_account.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -68,24 +69,4 @@ void main() {
       throwsA(DomainError.unexpected),
     );
   });
-}
-
-class LocalLoadCurrentAccount implements LoadCurrentAccount {
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-
-  LocalLoadCurrentAccount({required this.fetchSecureCacheStorage});
-
-  @override
-  Future<AccountEntity> load() async {
-    try {
-      final token = await fetchSecureCacheStorage.fetchSecure('token');
-      return AccountEntity(token: token);
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-}
-
-abstract class FetchSecureCacheStorage {
-  Future<String> fetchSecure(String key);
 }
