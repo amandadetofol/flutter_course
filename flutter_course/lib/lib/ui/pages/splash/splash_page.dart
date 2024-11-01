@@ -18,7 +18,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    widget.presenter.loadCurrentAccount();
+    widget.presenter.checkAccount();
   }
 
   @override

@@ -13,7 +13,7 @@ void main() {
   late StreamController<String> navigateToController;
 
   void mockPresenter() {
-    when(() => presenter.loadCurrentAccount()).thenAnswer((_) async {});
+    when(() => presenter.checkAccount()).thenAnswer((_) async {});
   }
 
   void mockPresenterNavigateTo() {
@@ -71,7 +71,7 @@ void main() {
       await loadPage(tester);
 
       verify(
-        () => presenter.loadCurrentAccount(),
+        () => presenter.checkAccount(),
       ).called(1);
     },
   );
