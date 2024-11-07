@@ -3,6 +3,7 @@ import 'package:flutter_course/lib/ui/components/error_snackbar.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../utils/i18n/resources.dart';
 import '../../components/components.dart';
 import 'components/components.dart';
 import 'login_presenter.dart';
@@ -92,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                           TextButton(
                             onPressed: () {},
                             child: Text(
-                              'Criar conta'.toUpperCase(),
+                              R.translations.addAccount.toUpperCase(),
                             ),
                           ),
                         ],
