@@ -9,7 +9,6 @@ final appTheme = ThemeData(
   primaryColorLight: primaryColorLight,
   primaryColorDark: primaryColorDark,
   highlightColor: primaryColor,
-  backgroundColor: Colors.white,
   textTheme: const TextTheme(
     displayLarge: TextStyle(
       fontSize: 30,

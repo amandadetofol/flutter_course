@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/pages/splash/splash.dart';
+import 'package:flutter_course/lib/ui/pages/splash/splash_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
@@ -43,15 +44,15 @@ void main() {
     );
   }
 
-  setUpAll(() {
+  setUp(() {
     presenter = SplashPresenterSpy();
-    navigateToController = StreamController<String>();
-
+    navigateToController = StreamController<String>.broadcast();
     mockPresenter();
     mockPresenterNavigateTo();
   });
 
   tearDown(() {
+    navigateToController.close();
     clearInteractions(presenter);
     navigateToController.close();
   });
