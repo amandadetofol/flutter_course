@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:provider/provider.dart';
 
+import '../../../helpers/i18n/resources.dart';
 import '../../pages.dart';
 
 class EmailInput extends StatelessWidget {
@@ -16,7 +17,7 @@ class EmailInput extends StatelessWidget {
       builder: (context, snapshot) {
         return TextFormField(
           decoration: InputDecoration(
-            label: const Text('E-mail'),
+            label: Text(R.translations.email),
             icon: const Icon(Icons.email),
             errorText:
                 (snapshot.data == null) ? null : snapshot.data?.description,

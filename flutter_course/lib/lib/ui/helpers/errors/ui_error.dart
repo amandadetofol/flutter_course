@@ -1,3 +1,5 @@
+import '../i18n/resources.dart';
+
 enum UIError {
   unexpected,
   invalidCredentials,
@@ -9,13 +11,13 @@ extension DomainErrorExtension on UIError {
   String get description {
     switch (this) {
       case UIError.unexpected:
-        return 'Algo errado aconteceu.';
+        return R.translations.unexpected;
       case UIError.invalidCredentials:
-        return 'Credenciais inválidas';
+        return R.translations.invalidCredentials;
       case UIError.requiredField:
-        return 'Campo obrigatório';
+        return R.translations.requiredField;
       case UIError.invalidField:
-        return 'Campo inválido';
+        return R.translations.invalidField;
     }
   }
 }

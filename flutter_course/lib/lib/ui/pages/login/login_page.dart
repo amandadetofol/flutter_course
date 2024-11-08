@@ -4,7 +4,7 @@ import 'package:flutter_course/lib/ui/helpers/errors/ui_error.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/i18n/resources.dart';
+import '../../helpers/i18n/resources.dart';
 import '../../components/components.dart';
 import 'components/components.dart';
 import 'login_presenter.dart';
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
               if (isLoading ?? false) {
                 showSpinnerDialog(
                   context,
-                  "Aguarde...",
+                  R.translations.loading,
                 );
               } else {
                 hideDialog(context);
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   const LoginHeader(),
                   Headline01(
-                    text: 'login'.toUpperCase(),
+                    text: R.translations.login.toUpperCase(),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(24),

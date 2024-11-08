@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/lib/ui/helpers/i18n/i18n.dart';
 import 'package:provider/provider.dart';
 
 import '../../pages.dart';
@@ -20,7 +21,7 @@ class SignInButton extends StatelessWidget {
                   presenter.auth();
                 },
           child: Text(
-            'Entrar'.toUpperCase(),
+            R.translations.login.toUpperCase(),
           ),
         );
       },

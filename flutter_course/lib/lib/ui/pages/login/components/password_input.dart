@@ -3,6 +3,8 @@ import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:flutter_course/lib/ui/pages/pages.dart';
 import 'package:provider/provider.dart';
 
+import '../../../helpers/i18n/resources.dart';
+
 class PasswordInput extends StatelessWidget {
   const PasswordInput({super.key});
 
@@ -15,7 +17,7 @@ class PasswordInput extends StatelessWidget {
       builder: (context, snapshot) {
         return TextFormField(
           decoration: InputDecoration(
-              label: const Text('senha'),
+              label: Text(R.translations.password),
               icon: const Icon(Icons.lock),
               errorText:
                   (snapshot.data == null) ? null : snapshot.data?.description),
