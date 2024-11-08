@@ -1,8 +1,8 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_course/lib/domain/domain.dart';
 import 'package:flutter_course/lib/domain/helpers/domain_error.dart';
-import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
+import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -23,7 +23,7 @@ void main() {
   final String token = faker.guid.guid();
   late SaveCurrentAccount saveCurrentAccount;
 
-  mockValidation(String field, String? value) {
+  mockValidation(String field, ValidationError? value) {
     when(
       () => validation.validate(
         field: field,
@@ -100,7 +100,7 @@ void main() {
   test(
     'Should emit email error if validation fails',
     () {
-      mockValidation('email', 'error');
+      mockValidation('email', ValidationError.requiredField);
 
       sut.validateEmail(email);
       sut.validateEmail(email);
@@ -109,7 +109,7 @@ void main() {
         (error) {
           expectAsync1(
             (error) {
-              expect(error, 'error');
+              expect(error, UIError.invalidField);
             },
           );
         },
@@ -204,7 +204,7 @@ void main() {
   test(
     'Should emit password error if validation fails',
     () {
-      mockValidation('password', 'error');
+      mockValidation('password', ValidationError.requiredField);
 
       sut.validatePassword(password);
       sut.validatePassword(password);
@@ -264,7 +264,7 @@ void main() {
   test(
     'Should emit null if validation succed',
     () {
-      mockValidation('email', 'error');
+      mockValidation('email', ValidationError.requiredField);
 
       sut.validateEmail(email);
       sut.validatePassword(password);

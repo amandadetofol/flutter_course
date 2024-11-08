@@ -11,7 +11,7 @@ void main() {
   late FieldValidation validation3;
   late ValidationComposite sut;
 
-  void mockValidation1(String? value) {
+  void mockValidation1(ValidationError? value) {
     when(() => validation1.field).thenReturn('other_field');
 
     when(
@@ -21,7 +21,7 @@ void main() {
     ).thenReturn(value);
   }
 
-  void mockValidation2(String? value) {
+  void mockValidation2(ValidationError? value) {
     when(() => validation2.field).thenReturn('any_field');
     when(
       () => validation2.validate(
@@ -30,7 +30,7 @@ void main() {
     ).thenReturn(value);
   }
 
-  void mockValidation3(String? value) {
+  void mockValidation3(ValidationError? value) {
     when(() => validation3.field).thenReturn('other_field');
     when(
       () => validation3.validate(
@@ -44,7 +44,7 @@ void main() {
     mockValidation1(null);
 
     validation2 = FieldValidationSpy();
-    mockValidation2('');
+    mockValidation2(null);
 
     validation3 = FieldValidationSpy();
     mockValidation3(null);
@@ -66,15 +66,15 @@ void main() {
   });
 
   test('Should return first error', () {
-    mockValidation1('error 1');
-    mockValidation2('error 2');
-    mockValidation3('error 3');
+    mockValidation1(null);
+    mockValidation2(ValidationError.invalidField);
+    mockValidation3(ValidationError.invalidField);
 
     final error = sut.validate(
       field: 'any_field',
       value: 'any_value',
     );
 
-    expect(error, 'error 2');
+    expect(error, ValidationError.invalidField);
   });
 }

@@ -1,3 +1,4 @@
+import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_course/lib/validators/validators.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,7 +18,7 @@ void main() {
   test('Should return error if email invalid', () {
     final sut = EmailValidation();
     var error = sut.validate('any_email');
-    expect(error, 'E-mail inválido');
+    expect(error, ValidationError.invalidField);
   });
 
   test('Should return error if email is valid', () {

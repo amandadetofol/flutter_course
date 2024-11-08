@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 
 import '../../domain/helpers/domain_error.dart';
+import '../../ui/helpers/errors/ui_error.dart';
 import '../../ui/pages/pages.dart';
 import 'protocols/validation.dart';
 
@@ -22,7 +23,7 @@ class StreamLoginPresenter implements LoginPresenter {
       .distinct();
 
   @override
-  Stream<String?> get emailErrorStream => _controller.stream
+  Stream<UIError?> get emailErrorStream => _controller.stream
       .map(
         (state) => state.emailError,
       )
@@ -43,13 +44,14 @@ class StreamLoginPresenter implements LoginPresenter {
       .distinct();
 
   @override
-  Stream<String?> get passwordErrorStream => _controller.stream
+  Stream<UIError?> get passwordErrorStream => _controller.stream
       .map(
         (state) => state.passwordError,
       )
       .distinct();
+
   @override
-  Stream<String?> get mainErrorStream => _controller.stream
+  Stream<UIError?> get mainErrorStream => _controller.stream
       .map(
         (state) => state.mainError,
       )
@@ -63,9 +65,9 @@ class StreamLoginPresenter implements LoginPresenter {
 
   @override
   void validateEmail(String email) {
-    _state.emailError = validation.validate(
-      field: 'email',
-      value: email,
+    _state.emailError = _validateField(
+      'email',
+      email,
     );
     _state.email = email;
     _controller.add(_state);
@@ -73,9 +75,9 @@ class StreamLoginPresenter implements LoginPresenter {
 
   @override
   void validatePassword(String password) {
-    _state.passwordError = validation.validate(
-      field: 'password',
-      value: password,
+    _state.passwordError = _validateField(
+      'password',
+      password,
     );
     _state.password = password;
     _controller.add(_state);
@@ -93,15 +95,21 @@ class StreamLoginPresenter implements LoginPresenter {
           secret: _state.password ?? '',
         ),
       );
+
       if (accountEntity != null) {
         await saveCurrentAccount.save(accountEntity);
         _state.path = '/surveys';
       } else {
-        _state.mainError = DomainError.unexpected.description;
+        _state.mainError = UIError.unexpected;
         _state.isLoading = false;
       }
     } on DomainError catch (error) {
-      _state.mainError = error.description;
+      switch (error) {
+        case DomainError.unexpected:
+          _state.mainError = UIError.unexpected;
+        case DomainError.invalidCredentials:
+          _state.mainError = UIError.invalidCredentials;
+      }
       _state.isLoading = false;
     }
 
@@ -112,20 +120,36 @@ class StreamLoginPresenter implements LoginPresenter {
   void dispose() {
     _controller.close();
   }
+
+  UIError? _validateField(String field, String value) {
+    final error = validation.validate(
+      field: field,
+      value: value,
+    );
+
+    switch (error) {
+      case ValidationError.invalidField:
+        return UIError.invalidField;
+      case ValidationError.requiredField:
+        return UIError.requiredField;
+      default:
+        return null;
+    }
+  }
 }
 
 class LoginState {
   String? email;
   String? password;
-  String? emailError;
-  String? passwordError;
+  UIError? emailError;
+  UIError? passwordError;
   bool? isLoading;
-  String? mainError;
+  UIError? mainError;
   String? path;
 
   bool? get isFormValid =>
       emailError == null &&
       passwordError == null &&
-      (email?.isNotEmpty ?? false) &&
-      (password?.isNotEmpty ?? false);
+      (email != null) &&
+      (password != null);
 }

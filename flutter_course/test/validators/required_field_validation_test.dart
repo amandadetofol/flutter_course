@@ -1,3 +1,4 @@
+import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_course/lib/validators/validators.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,7 +17,7 @@ void main() {
     () {
       final sut = RequiredFieldValidation(field: 'any_field');
       var fieldError = sut.validate(null);
-      expect(fieldError, 'Campo obrigatório.');
+      expect(fieldError, ValidationError.requiredField);
     },
   );
 
@@ -25,7 +26,7 @@ void main() {
     () {
       final sut = RequiredFieldValidation(field: 'any_field');
       var fieldError = sut.validate('');
-      expect(fieldError, 'Campo obrigatório.');
+      expect(fieldError, ValidationError.requiredField);
     },
   );
 }

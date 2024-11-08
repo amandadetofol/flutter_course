@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/components/error_snackbar.dart';
+import 'package:flutter_course/lib/ui/helpers/errors/ui_error.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -51,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
               if (errorMesage != null) {
                 showErrorSnackBar(
                   context,
-                  errorMesage,
+                  errorMesage.description,
                 );
               }
             },
