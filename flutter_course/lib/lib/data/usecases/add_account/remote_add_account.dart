@@ -2,6 +2,7 @@ import '../../../domain/domain.dart';
 import '../../../domain/helpers/domain_error.dart';
 import '../../http/http_client.dart';
 import '../../http/http_error.dart';
+import '../../model/remote_account_model.dart';
 
 class RemoteAddAccount {
   final ClientHttp httpClient;
@@ -20,6 +21,11 @@ class RemoteAddAccount {
     try {
       final response =
           await httpClient.request(url: url, method: 'post', body: body);
+      if (response != null) {
+        return RemoteAccountModel.fromJson(response).toEntity();
+      } else {
+        return null;
+      }
     } on HttpError catch (error) {
       switch (error) {
         case HttpError.unauthorized:

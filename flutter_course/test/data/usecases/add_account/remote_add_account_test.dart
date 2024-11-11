@@ -11,6 +11,7 @@ class ClientHttpSpy extends Mock implements ClientHttp {}
 void main() {
   late ClientHttpSpy httpClient;
   late String url;
+  late String token;
   late String password;
   late RemoteAddAccount sut;
   late AddAccountParams addAccountParameters;
@@ -33,6 +34,8 @@ void main() {
 
   setUp(
     () {
+      token = faker.guid.guid();
+
       password = faker.internet.password();
       httpClient = ClientHttpSpy();
       url = faker.internet.httpUrl();
@@ -55,6 +58,13 @@ void main() {
           'email': addAccountParameters.email,
           'password': addAccountParameters.password,
           'passwordConfirmation': addAccountParameters.password,
+        },
+      );
+
+      mockData(
+        {
+          'accessToken': token,
+          'name': faker.person.name(),
         },
       );
     },
@@ -124,19 +134,9 @@ void main() {
     },
   );
 
-/*
   test(
     'Should return an AccountEntity if HttpClient returns 200',
     () async {
-      final token = faker.guid.guid();
-
-      mockData(
-        {
-          'accessToken': token,
-          'name': faker.person.name(),
-        },
-      );
-
       final account = await sut.add(parameters: addAccountParameters);
 
       expect(
@@ -159,5 +159,5 @@ void main() {
 
       expect(future, throwsA(DomainError.unexpected));
     },
-  );*/
+  );
 }
