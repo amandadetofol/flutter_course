@@ -107,7 +107,7 @@ class StreamLoginPresenter implements LoginPresenter {
       switch (error) {
         case DomainError.unexpected:
           _state.mainError = UIError.unexpected;
-        case DomainError.invalidCredentials:
+        default:
           _state.mainError = UIError.invalidCredentials;
       }
       _state.isLoading = false;

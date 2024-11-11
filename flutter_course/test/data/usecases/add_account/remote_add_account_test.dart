@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_course/lib/data/http/http.dart';
 import 'package:flutter_course/lib/data/usecases/usecases.dart';
+import 'package:flutter_course/lib/domain/helpers/domain_error.dart';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -78,4 +79,85 @@ void main() {
       );
     },
   );
+
+  test(
+    'Should throw UnexpectedError if HttpClient returns 400',
+    () async {
+      mockError(HttpError.badRequest);
+
+      final future = sut.add(parameters: addAccountParameters);
+
+      expect(future, throwsA(DomainError.unexpected));
+    },
+  );
+
+  test(
+    'Should throw UnexpectedError if HttpClient returns 404',
+    () async {
+      mockError(HttpError.notFound);
+
+      final future = sut.add(parameters: addAccountParameters);
+
+      expect(future, throwsA(DomainError.unexpected));
+    },
+  );
+
+  test(
+    'Should throw UnexpectedError if HttpClient returns 500',
+    () async {
+      mockError(HttpError.serverError);
+
+      final future = sut.add(parameters: addAccountParameters);
+
+      expect(future, throwsA(DomainError.unexpected));
+    },
+  );
+
+  test(
+    'Should throw InvalidCredentials if HttpClient returns 403',
+    () async {
+      mockError(HttpError.forbidden);
+
+      final future = sut.add(parameters: addAccountParameters);
+
+      expect(future, throwsA(DomainError.emailInUse));
+    },
+  );
+
+/*
+  test(
+    'Should return an AccountEntity if HttpClient returns 200',
+    () async {
+      final token = faker.guid.guid();
+
+      mockData(
+        {
+          'accessToken': token,
+          'name': faker.person.name(),
+        },
+      );
+
+      final account = await sut.add(parameters: addAccountParameters);
+
+      expect(
+        account?.token,
+        token,
+      );
+    },
+  );
+
+  test(
+    'Should return an UnexpectedError if HttpClient returns 200 with invalid data',
+    () async {
+      mockData(
+        {
+          'invalid_key': 'invalid_value',
+        },
+      );
+
+      final future = sut.add(parameters: addAccountParameters);
+
+      expect(future, throwsA(DomainError.unexpected));
+    },
+  );*/
 }
