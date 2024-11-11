@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:flutter_course/lib/ui/pages/pages.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -9,9 +10,9 @@ import 'package:mocktail/mocktail.dart';
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
-  late StreamController<String?> emailErrorController;
-  late StreamController<String?> passwordErrorController;
-  late StreamController<String?> mainErrorController;
+  late StreamController<UIError?> emailErrorController;
+  late StreamController<UIError?> passwordErrorController;
+  late StreamController<UIError?> mainErrorController;
   late StreamController<bool> isFormValidController;
   late StreamController<bool> isLoadingController;
   late StreamController<String?> navigateToController;
@@ -19,9 +20,9 @@ void main() {
   late LoginPresenter presenter;
 
   void initStreams() {
-    emailErrorController = StreamController<String?>();
-    passwordErrorController = StreamController<String?>();
-    mainErrorController = StreamController<String?>();
+    emailErrorController = StreamController<UIError?>();
+    passwordErrorController = StreamController<UIError?>();
+    mainErrorController = StreamController<UIError?>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
     navigateToController = StreamController<String?>.broadcast();
@@ -91,12 +92,12 @@ void main() {
     (WidgetTester tester) async {
       await loadPage(tester);
 
-      emailErrorController.add('any error');
+      emailErrorController.add(UIError.invalidField);
 
       await tester.pumpAndSettle();
 
       expect(
-        find.text('any error'),
+        find.text('Campo inválido'),
         findsOneWidget,
       );
     },
@@ -128,28 +129,12 @@ void main() {
     (WidgetTester tester) async {
       await loadPage(tester);
 
-      passwordErrorController.add('any error');
+      passwordErrorController.add(UIError.invalidField);
 
       await tester.pumpAndSettle();
 
       expect(
-        find.text('any error'),
-        findsOneWidget,
-      );
-    },
-  );
-
-  testWidgets(
-    'Should present error when password is invalid',
-    (WidgetTester tester) async {
-      await loadPage(tester);
-
-      passwordErrorController.add('any error');
-
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('any error'),
+        find.text('Campo inválido'),
         findsOneWidget,
       );
     },
@@ -233,10 +218,10 @@ void main() {
     (WidgetTester tester) async {
       await loadPage(tester);
 
-      mainErrorController.add('main error');
+      mainErrorController.add(UIError.unexpected);
       await tester.pumpAndSettle();
 
-      expect(find.text('main error'), findsOneWidget);
+      expect(find.text('Algo errado aconteceu'), findsOneWidget);
     },
   );
 
