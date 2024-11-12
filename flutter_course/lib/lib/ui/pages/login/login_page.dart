@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/components/error_snackbar.dart';
 import 'package:flutter_course/lib/ui/helpers/errors/ui_error.dart';

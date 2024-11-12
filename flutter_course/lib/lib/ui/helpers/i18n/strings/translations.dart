@@ -6,7 +6,8 @@ abstract class Translations {
   String get invalidField;
   String get loading;
   String get email;
-
+  String get name;
+  String get passwordConfirmation;
   String get login;
   String get password;
 }
