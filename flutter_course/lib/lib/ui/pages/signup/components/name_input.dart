@@ -24,7 +24,7 @@ class NameInput extends StatelessWidget {
                     : snapshot.data?.description),
             keyboardType: TextInputType.name,
             obscureText: true,
-            onChanged: presenter.validatePassword,
+            onChanged: presenter.validateName,
           );
         });
   }

@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/headline01.dart';
 import '../../components/login_header.dart';
@@ -23,44 +24,46 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPage extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Builder(builder: (context) {
-        return GestureDetector(
-          onDoubleTap: _hideKeyboard,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const LoginHeader(),
-                Headline01(
-                  text: R.translations.login.toUpperCase(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Form(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const NameInput(),
-                        const EmailInput(),
-                        const PasswordInput(),
-                        const PasswordConfirmationInput(),
-                        TextButton(
-                          onPressed: null,
-                          child: Text(
-                            R.translations.addAccount.toUpperCase(),
-                          ),
-                        ),
-                      ],
+    return Provider<SignUpPresenter>(
+        create: (_) => widget.presenter,
+        child: Scaffold(
+          body: Builder(builder: (context) {
+            return GestureDetector(
+              onDoubleTap: _hideKeyboard,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const LoginHeader(),
+                    Headline01(
+                      text: R.translations.login.toUpperCase(),
                     ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      }),
-    );
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Form(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const NameInput(),
+                            const EmailInput(),
+                            const PasswordInput(),
+                            const PasswordConfirmationInput(),
+                            TextButton(
+                              onPressed: null,
+                              child: Text(
+                                R.translations.addAccount.toUpperCase(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }),
+        ));
   }
 
   void _hideKeyboard() {

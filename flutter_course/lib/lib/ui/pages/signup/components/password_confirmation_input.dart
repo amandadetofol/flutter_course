@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../helpers/errors/ui_error.dart';
 import '../../../helpers/i18n/resources.dart';
 
-class PasswordInput extends StatelessWidget {
-  const PasswordInput({super.key});
+class PasswordConfirmationInput extends StatelessWidget {
+  const PasswordConfirmationInput({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class PasswordInput extends StatelessWidget {
         builder: (context, snapshot) {
           return TextFormField(
             decoration: InputDecoration(
-                label: Text(R.translations.password),
+                label: Text(R.translations.passwordConfirmation),
                 icon: const Icon(Icons.lock),
                 errorText: (snapshot.data == null)
                     ? null

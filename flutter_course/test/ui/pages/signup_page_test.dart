@@ -19,10 +19,11 @@ void main() {
   late SignUpPresenter presenter;
 
   void initStreams() {
-    emailErrorController = StreamController<UIError?>();
-    passwordErrorController = StreamController<UIError?>();
-    nameErrorController = StreamController<UIError?>();
-    passwordConfirmationErrorController = StreamController<UIError?>();
+    emailErrorController = StreamController<UIError?>.broadcast();
+    passwordErrorController = StreamController<UIError?>.broadcast();
+    nameErrorController = StreamController<UIError?>.broadcast();
+    passwordConfirmationErrorController =
+        StreamController<UIError?>.broadcast();
 
     presenter = SignUpPresenterSpy();
   }
@@ -123,18 +124,22 @@ void main() {
 
     final name = faker.person.name();
     await tester.enterText(find.bySemanticsLabel('Nome'), name);
-    verify(() => presenter.validateName(name));
+    await tester.pumpAndSettle();
+    verify(() => presenter.validateName(name)).called(1);
 
     final email = faker.internet.email();
     await tester.enterText(find.bySemanticsLabel('E-mail'), email);
-    verify(() => presenter.validateEmail(email));
+    verify(() => presenter.validateEmail(email)).called(1);
+    await tester.pump();
 
     final password = faker.internet.password();
     await tester.enterText(find.bySemanticsLabel('Senha'), password);
-    verify(() => presenter.validatePassword(password));
+    verify(() => presenter.validatePassword(password)).called(1);
+    await tester.pump();
 
     await tester.enterText(
         find.bySemanticsLabel('Confirme sua senha'), password);
-    verify(() => presenter.validatePasswordConfirmation(password));
+    verify(() => presenter.validatePasswordConfirmation(password)).called(1);
+    await tester.pump();
   });
 }
