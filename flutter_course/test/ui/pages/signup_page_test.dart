@@ -142,4 +142,46 @@ void main() {
     verify(() => presenter.validatePasswordConfirmation(password)).called(1);
     await tester.pump();
   });
+
+  testWidgets(
+    'Should present e-mail error',
+    (WidgetTester tester) async {
+      //campo invalido
+      await loadPage(tester);
+
+      emailErrorController.add(UIError.invalidField);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Campo inválido'),
+        findsOneWidget,
+      );
+
+      //campo obrigatorio
+      await loadPage(tester);
+
+      emailErrorController.add(UIError.requiredField);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Campo obrigatório'),
+        findsOneWidget,
+      );
+
+      //sem erro
+      await loadPage(tester);
+
+      emailErrorController.add(null);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+            of: find.bySemanticsLabel('E-mail'), matching: find.byType(Text)),
+        findsOneWidget,
+      );
+    },
+  );
 }
