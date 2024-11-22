@@ -184,4 +184,34 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Should present name error',
+    (WidgetTester tester) async {
+      //campo obrigatorio
+      await loadPage(tester);
+
+      emailErrorController.add(UIError.requiredField);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Campo obrigatório'),
+        findsOneWidget,
+      );
+
+      //sem erro
+      await loadPage(tester);
+
+      emailErrorController.add(null);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+            of: find.bySemanticsLabel('E-mail'), matching: find.byType(Text)),
+        findsOneWidget,
+      );
+    },
+  );
 }
