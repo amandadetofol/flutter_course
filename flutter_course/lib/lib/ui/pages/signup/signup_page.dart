@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../components/headline01.dart';
 import '../../components/login_header.dart';
+import '../../components/spinner_dialog.dart';
 import '../../helpers/i18n/resources.dart';
 import 'components/components.dart';
 import 'signup_presenter.dart';
@@ -28,6 +29,19 @@ class _SignUpPage extends State<SignUpPage> {
         create: (_) => widget.presenter,
         child: Scaffold(
           body: Builder(builder: (context) {
+            widget.presenter.isLoadingStream.listen(
+              (isLoading) {
+                if (isLoading ?? false) {
+                  showSpinnerDialog(
+                    context,
+                    R.translations.loading,
+                  );
+                } else {
+                  hideDialog(context);
+                }
+              },
+            );
+
             return GestureDetector(
               onDoubleTap: _hideKeyboard,
               child: SingleChildScrollView(
