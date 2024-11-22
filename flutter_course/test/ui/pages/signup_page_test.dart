@@ -214,4 +214,53 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Should present password error',
+    (WidgetTester tester) async {
+      //sem erro
+      await loadPage(tester);
+
+      passwordErrorController.add(null);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+            of: find.bySemanticsLabel('Senha'), matching: find.byType(Text)),
+        findsOneWidget,
+      );
+
+      //campo obrigatorio
+      await loadPage(tester);
+
+      passwordErrorController.add(UIError.requiredField);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Campo obrigatório'),
+        findsNWidgets(3),
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present passwordConfirmation ',
+    (WidgetTester tester) async {
+      //sem erro
+      await loadPage(tester);
+
+      passwordConfirmationErrorController.add(null);
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+            of: find.bySemanticsLabel('Confirme sua senha'),
+            matching: find.byType(Text)),
+        findsOneWidget,
+      );
+    },
+  );
 }
