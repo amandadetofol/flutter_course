@@ -15,6 +15,7 @@ void main() {
   late StreamController<UIError?> nameErrorController;
   late StreamController<UIError?> passwordErrorController;
   late StreamController<UIError?> passwordConfirmationErrorController;
+  late StreamController<bool> isFormValidController;
 
   late SignUpPresenter presenter;
 
@@ -24,7 +25,7 @@ void main() {
     nameErrorController = StreamController<UIError?>.broadcast();
     passwordConfirmationErrorController =
         StreamController<UIError?>.broadcast();
-
+    isFormValidController = StreamController<bool>.broadcast();
     presenter = SignUpPresenterSpy();
   }
 
@@ -32,14 +33,17 @@ void main() {
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
 
-    when(() => presenter.nameErrorController)
+    when(() => presenter.nameErrorStream)
         .thenAnswer((_) => nameErrorController.stream);
 
-    when(() => presenter.passwordConfirmationErrorController)
+    when(() => presenter.passwordConfirmationErrorStream)
         .thenAnswer((_) => passwordConfirmationErrorController.stream);
 
     when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
+
+    when(() => presenter.isFormValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
   }
 
   void closeStreams() {
@@ -47,6 +51,7 @@ void main() {
     passwordErrorController.close();
     passwordConfirmationErrorController.close();
     nameErrorController.close();
+    isFormValidController.close();
   }
 
   setUp(() {
@@ -80,8 +85,8 @@ void main() {
       expect(find.bySemanticsLabel('Senha'), findsOneWidget);
       expect(find.bySemanticsLabel('Confirme sua senha'), findsOneWidget);
 
-      final button = tester.widget<TextButton>(find.byType(TextButton));
-      expect(button.onPressed, null);
+      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+      expect(button.onPressed, isA<Function>());
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
 
@@ -246,7 +251,7 @@ void main() {
   );
 
   testWidgets(
-    'Should present passwordConfirmation ',
+    'Should present passwordConfirmation',
     (WidgetTester tester) async {
       //sem erro
       await loadPage(tester);
@@ -260,6 +265,46 @@ void main() {
             of: find.bySemanticsLabel('Confirme sua senha'),
             matching: find.byType(Text)),
         findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should enable form button when form if valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(true);
+
+      await tester.pumpAndSettle();
+
+      final button = tester.widget<ElevatedButton>(
+        find.byType(ElevatedButton),
+      );
+
+      expect(
+        button.onPressed,
+        isNotNull,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should disable form button when form if valid',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(false);
+
+      await tester.pumpAndSettle();
+
+      final button = tester.widget<ElevatedButton>(
+        find.byType(ElevatedButton),
+      );
+
+      expect(
+        button.onPressed,
+        null,
       );
     },
   );

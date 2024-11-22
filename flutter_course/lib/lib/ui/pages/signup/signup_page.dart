@@ -38,22 +38,17 @@ class _SignUpPage extends State<SignUpPage> {
                     Headline01(
                       text: R.translations.login.toUpperCase(),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(24),
+                    const Padding(
+                      padding: EdgeInsets.all(24),
                       child: Form(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const NameInput(),
-                            const EmailInput(),
-                            const PasswordInput(),
-                            const PasswordConfirmationInput(),
-                            TextButton(
-                              onPressed: null,
-                              child: Text(
-                                R.translations.addAccount.toUpperCase(),
-                              ),
-                            ),
+                            NameInput(),
+                            EmailInput(),
+                            PasswordInput(),
+                            PasswordConfirmationInput(),
+                            SignUpButton(),
                           ],
                         ),
                       ),

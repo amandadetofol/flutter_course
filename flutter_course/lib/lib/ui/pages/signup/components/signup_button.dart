@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/lib/ui/helpers/i18n/i18n.dart';
+import 'package:flutter_course/lib/ui/pages/signup/signup_presenter.dart';
 import 'package:provider/provider.dart';
 
 import '../../pages.dart';
 
-class SignInButton extends StatelessWidget {
-  const SignInButton({super.key});
+class SignUpButton extends StatelessWidget {
+  const SignUpButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final presenter = Provider.of<LoginPresenter>(context);
+    final presenter = Provider.of<SignUpPresenter>(context);
 
     return StreamBuilder<bool?>(
       stream: presenter.isFormValidStream,
@@ -18,7 +19,7 @@ class SignInButton extends StatelessWidget {
           onPressed: (snapshot.data == false)
               ? null
               : () {
-                  presenter.auth();
+                  presenter.signUp();
                 },
           child: Text(
             R.translations.login.toUpperCase(),
