@@ -11,6 +11,7 @@ void main() {
   late ValidationSpy validation;
   late String email;
   late String name;
+  late String password;
 
   mockValidation(String field, ValidationError? value) {
     when(
@@ -23,6 +24,7 @@ void main() {
 
   setUp(() {
     email = faker.internet.email();
+    password = faker.internet.password();
     name = faker.person.name();
     validation = ValidationSpy();
     sut = GetXSignUpPresenter(validation: validation);
@@ -46,7 +48,7 @@ void main() {
       sut.validateEmail(email);
       sut.validateEmail(email);
 
-      sut.emailErrorStream?.listen(
+      sut.emailErrorStream.listen(
         (error) {
           expectAsync1(
             (error) {
@@ -73,7 +75,7 @@ void main() {
       sut.validateEmail(email);
       sut.validateEmail(email);
 
-      sut.emailErrorStream?.listen(
+      sut.emailErrorStream.listen(
         (error) {
           expectAsync1(
             (error) {
@@ -100,7 +102,7 @@ void main() {
       sut.validateEmail(email);
       sut.validateEmail(email);
 
-      sut.emailErrorStream?.listen(
+      sut.emailErrorStream.listen(
         (error) {
           expectAsync1(
             (error) {
@@ -140,7 +142,7 @@ void main() {
       sut.validateName(email);
       sut.validateName(email);
 
-      sut.nameErrorStream?.listen(
+      sut.nameErrorStream.listen(
         (error) {
           expectAsync1(
             (error) {
@@ -167,7 +169,74 @@ void main() {
       sut.validateName(name);
       sut.validateName(name);
 
-      sut.nameErrorStream?.listen(
+      sut.nameErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, null);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    });
+  });
+
+  group('password tests', () {
+    test('Shouldcall validation with correct password', () {
+      sut.validatePassword(password);
+
+      verify(() {
+        validation.validate(
+          field: 'password',
+          value: password,
+        );
+      }).called(1);
+    });
+
+    test('Should emit null if password is empty', () {
+      mockValidation('password', ValidationError.requiredField);
+
+      sut.validatePassword(password);
+      sut.validatePassword(password);
+
+      sut.passwordErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, UIError.requiredField);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    });
+
+    test('Should emit null if validation succeeds', () {
+      mockValidation('password', null);
+
+      sut.validatePassword(password);
+      sut.validatePassword(password);
+
+      sut.passwordErrorStream.listen(
         (error) {
           expectAsync1(
             (error) {
