@@ -33,4 +33,7 @@ class PtBr implements Translations {
 
   @override
   String get passwordConfirmation => 'Confirme sua senha';
+
+  @override
+  String get emailInUse => 'O e-mail já está em uso';
 }

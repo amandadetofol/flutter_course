@@ -5,6 +5,7 @@ enum UIError {
   invalidCredentials,
   requiredField,
   invalidField,
+  emailInUse
 }
 
 extension DomainErrorExtension on UIError {
@@ -18,6 +19,8 @@ extension DomainErrorExtension on UIError {
         return R.translations.requiredField;
       case UIError.invalidField:
         return R.translations.invalidField;
+      case UIError.emailInUse:
+        return R.translations.emailInUse;
     }
   }
 }

@@ -12,6 +12,8 @@ class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
 void main() {
   late StreamController<UIError?> emailErrorController;
+  late StreamController<String?> navigateToController;
+  late StreamController<UIError?> mainErrorController;
   late StreamController<UIError?> nameErrorController;
   late StreamController<UIError?> passwordErrorController;
   late StreamController<UIError?> passwordConfirmationErrorController;
@@ -21,6 +23,8 @@ void main() {
   late SignUpPresenter presenter;
 
   void initStreams() {
+    navigateToController = StreamController<String?>.broadcast();
+    mainErrorController = StreamController<UIError?>.broadcast();
     emailErrorController = StreamController<UIError?>.broadcast();
     passwordErrorController = StreamController<UIError?>.broadcast();
     nameErrorController = StreamController<UIError?>.broadcast();
@@ -49,6 +53,12 @@ void main() {
 
     when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
+
+    when(() => presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
+
+    when(() => presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
   }
 
   void closeStreams() {
@@ -58,6 +68,8 @@ void main() {
     nameErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
+    navigateToController.close();
   }
 
   setUp(() {
@@ -74,6 +86,14 @@ void main() {
 
     final app = GetMaterialApp(
       home: signUpPage,
+      getPages: [
+        GetPage(
+          name: '/surveys',
+          page: () => const Scaffold(
+            body: Text('Enquetes'),
+          ),
+        ),
+      ],
     );
 
     await tester.pumpWidget(app);
@@ -345,6 +365,60 @@ void main() {
         find.byType(CircularProgressIndicator),
         findsNothing,
       );
+    },
+  );
+
+  testWidgets(
+    'Should present error message if signup returns email in use error',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      mainErrorController.add(UIError.emailInUse);
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(SnackBar),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should present error message if signup returns error',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      mainErrorController.add(UIError.unexpected);
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(SnackBar),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Should navigate to page ',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      final routeExpectation =
+          expectLater(presenter.navigateToStream, emits('/surveys'));
+
+      navigateToController.add('/surveys');
+
+      await tester.pumpAndSettle();
+
+      await Future.wait([
+        routeExpectation,
+      ]);
     },
   );
 }

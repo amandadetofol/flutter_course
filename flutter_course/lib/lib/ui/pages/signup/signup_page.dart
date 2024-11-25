@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/error_snackbar.dart';
 import '../../components/headline01.dart';
 import '../../components/login_header.dart';
 import '../../components/spinner_dialog.dart';
@@ -29,15 +31,34 @@ class _SignUpPage extends State<SignUpPage> {
         create: (_) => widget.presenter,
         child: Scaffold(
           body: Builder(builder: (context) {
+            widget.presenter.mainErrorStream.listen(
+              (errorMesage) {
+                if (errorMesage != null) {
+                  showErrorSnackBar(
+                    context,
+                    errorMesage.name,
+                  );
+                }
+              },
+            );
+
             widget.presenter.isLoadingStream.listen(
               (isLoading) {
-                if (isLoading ?? false) {
+                if (isLoading) {
                   showSpinnerDialog(
                     context,
                     R.translations.loading,
                   );
                 } else {
                   hideDialog(context);
+                }
+              },
+            );
+
+            widget.presenter.navigateToStream.listen(
+              (page) {
+                if (page?.isNotEmpty == true) {
+                  Get.offAllNamed(page!);
                 }
               },
             );
