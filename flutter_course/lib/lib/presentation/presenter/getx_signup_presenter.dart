@@ -6,13 +6,15 @@ import '../../ui/helpers/errors/ui_error.dart';
 class GetXSignUpPresenter {
   final Validation validation;
   final Rx<UIError?> _emailError = Rx<UIError?>(null);
+  final Rx<UIError?> _nameError = Rx<UIError?>(null);
   final RxBool _isFormValid = false.obs;
   String _email = "";
+  String _name = "";
 
   GetXSignUpPresenter({required this.validation});
 
   Stream<UIError?> get emailErrorStream => _emailError.stream;
-
+  Stream<UIError?> get nameErrorStream => _nameError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
 
   void _validateForm() {
@@ -22,6 +24,12 @@ class GetXSignUpPresenter {
   void validateEmail(String email) {
     _email = email;
     _emailError.value = _validateField('email', email);
+    _validateForm();
+  }
+
+  void validateName(String name) {
+    _name = name;
+    _nameError.value = _validateField('name', name);
     _validateForm();
   }
 
