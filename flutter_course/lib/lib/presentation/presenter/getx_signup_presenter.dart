@@ -11,10 +11,12 @@ class GetXSignUpPresenter {
   final SaveCurrentAccount saveCurrentAccount;
 
   final Rx<UIError?> _emailError = Rx<UIError?>(null);
+  final Rx<UIError?> _mainError = Rx<UIError?>(null);
   final Rx<UIError?> _nameError = Rx<UIError?>(null);
   final Rx<UIError?> _passwordError = Rx<UIError?>(null);
   final Rx<UIError?> _passwordConfirmationError = Rx<UIError?>(null);
   final RxBool _isFormValid = false.obs;
+  final RxBool _isLoading = false.obs;
   String _email = "";
   String _name = "";
   String _password = "";
@@ -29,8 +31,10 @@ class GetXSignUpPresenter {
   Stream<UIError?> get emailErrorStream => _emailError.stream;
   Stream<UIError?> get nameErrorStream => _nameError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+  Stream<bool> get isLoadingStream => _isLoading.stream;
   Stream<UIError?> get passwordErrorStream => _passwordError.stream;
   Stream<UIError?> get passwordConfirmationErrorStream => _passwordError.stream;
+  Stream<UIError?> get mainErrorStream => _mainError.stream;
 
   void _validateForm() {
     _isFormValid.value = _emailError.value == null &&
@@ -44,6 +48,7 @@ class GetXSignUpPresenter {
   }
 
   Future<void> signUp() async {
+    _isLoading.value = true;
     try {
       final account = await addAccount.addAccount(
         parameters: AddAccountParams(
@@ -56,11 +61,14 @@ class GetXSignUpPresenter {
 
       if (account != null) {
         await saveCurrentAccount.save(account);
+        _isLoading.value = false;
       } else {
-        throw DomainError.unexpected;
+        _isLoading.value = false;
+        _mainError.value = UIError.unexpected;
       }
     } catch (error) {
-      throw DomainError.unexpected;
+      _isLoading.value = false;
+      _mainError.value = UIError.unexpected;
     }
   }
 

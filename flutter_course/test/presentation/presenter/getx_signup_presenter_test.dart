@@ -145,9 +145,26 @@ void main() {
     sut.validatePassword(password);
     sut.validatePasswordConfirmation(password);
 
-    expectLater(
-      () async => await sut.signUp(),
-      throwsA(DomainError.unexpected),
+    await sut.signUp();
+
+    sut.mainErrorStream.listen(
+      (error) {
+        expectAsync1(
+          (error) {
+            expect(error, UIError.unexpected);
+          },
+        );
+      },
+    );
+
+    sut.isLoadingStream.listen(
+      (error) {
+        expectAsync1(
+          (error) {
+            emitsInOrder([false, true]);
+          },
+        );
+      },
     );
   });
 
