@@ -7,6 +7,7 @@ import '../../ui/helpers/errors/ui_error.dart';
 class GetXSignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
+  final SaveCurrentAccount saveCurrentAccount;
 
   final Rx<UIError?> _emailError = Rx<UIError?>(null);
   final Rx<UIError?> _nameError = Rx<UIError?>(null);
@@ -21,6 +22,7 @@ class GetXSignUpPresenter {
   GetXSignUpPresenter({
     required this.validation,
     required this.addAccount,
+    required this.saveCurrentAccount,
   });
 
   Stream<UIError?> get emailErrorStream => _emailError.stream;
@@ -41,13 +43,18 @@ class GetXSignUpPresenter {
   }
 
   Future<void> signUp() async {
-    await addAccount.addAccount(
-        parameters: AddAccountParams(
-      email: _email,
-      name: _name,
-      password: _password,
-      passwordConfirmation: _passwordConfirmation,
-    ));
+    final account = await addAccount.addAccount(
+      parameters: AddAccountParams(
+        email: _email,
+        name: _name,
+        password: _password,
+        passwordConfirmation: _passwordConfirmation,
+      ),
+    );
+
+    if (account != null) {
+      await saveCurrentAccount.save(account);
+    }
   }
 
   void validateEmail(String email) {

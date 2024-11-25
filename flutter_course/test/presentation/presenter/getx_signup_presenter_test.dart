@@ -1,6 +1,5 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_course/lib/domain/domain.dart';
-import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +13,8 @@ class AccountEntityMock extends Mock implements AccountEntity {}
 
 class AddAccountParamsSpy extends Mock implements AddAccountParams {}
 
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
+
 void main() {
   late GetXSignUpPresenter sut;
   late AddAccountSpy addAccountSpy;
@@ -23,6 +24,7 @@ void main() {
   late String name;
   late String password;
   late AccountEntityMock accountEntityMock;
+  late SaveCurrentAccountSpy saveCurrentAccount;
 
   mockSignUp(AccountEntity? entity) {
     when(
@@ -47,18 +49,26 @@ void main() {
     ).thenReturn(value);
   }
 
-  setUp(() {
-    accountEntityMock = AccountEntityMock();
+  void mockSaveCurrentAccount() {
+    when(() => saveCurrentAccount.save(any()))
+        .thenAnswer((_) async => AccountEntity(token: token));
+  }
 
+  setUp(() {
     email = faker.internet.email();
     password = faker.internet.password();
     name = faker.person.name();
     token = faker.guid.guid();
+
     addAccountSpy = AddAccountSpy();
     validation = ValidationSpy();
+    accountEntityMock = AccountEntityMock();
+    saveCurrentAccount = SaveCurrentAccountSpy();
+
     sut = GetXSignUpPresenter(
       validation: validation,
       addAccount: addAccountSpy,
+      saveCurrentAccount: saveCurrentAccount,
     );
 
     registerFallbackValue(accountEntityMock);
@@ -70,6 +80,7 @@ void main() {
           passwordConfirmation: password),
     );
     mockSignUp(accountEntityMock);
+    mockSaveCurrentAccount();
   });
 
   test('Should enable form button if all fields are valid', () async {
@@ -101,6 +112,19 @@ void main() {
         password: password,
         passwordConfirmation: password,
       ));
+    }).called(1);
+  });
+
+  test('Should call SaveCurrentAccount with correct value', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    verify(() {
+      saveCurrentAccount.save(accountEntityMock);
     }).called(1);
   });
 
