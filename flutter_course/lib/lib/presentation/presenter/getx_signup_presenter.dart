@@ -8,10 +8,12 @@ class GetXSignUpPresenter {
   final Rx<UIError?> _emailError = Rx<UIError?>(null);
   final Rx<UIError?> _nameError = Rx<UIError?>(null);
   final Rx<UIError?> _passwordError = Rx<UIError?>(null);
+  final Rx<UIError?> _passwordConfirmationError = Rx<UIError?>(null);
   final RxBool _isFormValid = false.obs;
   String _email = "";
   String _name = "";
   String _password = "";
+  String _passwordConfirmation = "";
 
   GetXSignUpPresenter({required this.validation});
 
@@ -19,6 +21,7 @@ class GetXSignUpPresenter {
   Stream<UIError?> get nameErrorStream => _nameError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
   Stream<UIError?> get passwordErrorStream => _passwordError.stream;
+  Stream<UIError?> get passwordConfirmationErrorStream => _passwordError.stream;
 
   void _validateForm() {
     _isFormValid.value = _emailError.value == null && _email.isNotEmpty;
@@ -37,6 +40,12 @@ class GetXSignUpPresenter {
   }
 
   void validatePassword(String password) {
+    _passwordConfirmation = password;
+    _passwordConfirmationError.value = _validateField('password', password);
+    _validateForm();
+  }
+
+  void validatePasswordConfirmation(String password) {
     _password = password;
     _passwordError.value = _validateField('password', password);
     _validateForm();

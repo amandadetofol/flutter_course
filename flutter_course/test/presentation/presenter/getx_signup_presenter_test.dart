@@ -257,4 +257,71 @@ void main() {
       );
     });
   });
+
+  group('password confirmation tests', () {
+    test('Should call validation with correct passwordConfirmation', () {
+      sut.validatePasswordConfirmation(password);
+
+      verify(() {
+        validation.validate(
+          field: 'password',
+          value: password,
+        );
+      }).called(1);
+    });
+
+    test('Should emit null if passwordConfirmation is empty', () {
+      mockValidation('passwordConfirmation', ValidationError.requiredField);
+
+      sut.validatePasswordConfirmation(password);
+      sut.validatePasswordConfirmation(password);
+
+      sut.passwordConfirmationErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, UIError.requiredField);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    });
+
+    test('Should emit null if validation succeeds', () {
+      mockValidation('passwordConfirmation', null);
+
+      sut.validatePasswordConfirmation(password);
+      sut.validatePasswordConfirmation(password);
+
+      sut.passwordConfirmationErrorStream.listen(
+        (error) {
+          expectAsync1(
+            (error) {
+              expect(error, null);
+            },
+          );
+        },
+      );
+
+      sut.isFormValidStream.listen(
+        (isValid) {
+          expectAsync1(
+            (isValid) {
+              expect(isValid, false);
+            },
+          );
+        },
+      );
+    });
+  });
 }
