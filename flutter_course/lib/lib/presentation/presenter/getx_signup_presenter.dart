@@ -1,3 +1,4 @@
+import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presenter/protocols/validation.dart';
 import 'package:get/get.dart';
 
@@ -5,6 +6,8 @@ import '../../ui/helpers/errors/ui_error.dart';
 
 class GetXSignUpPresenter {
   final Validation validation;
+  final AddAccount addAccount;
+
   final Rx<UIError?> _emailError = Rx<UIError?>(null);
   final Rx<UIError?> _nameError = Rx<UIError?>(null);
   final Rx<UIError?> _passwordError = Rx<UIError?>(null);
@@ -15,7 +18,10 @@ class GetXSignUpPresenter {
   String _password = "";
   String _passwordConfirmation = "";
 
-  GetXSignUpPresenter({required this.validation});
+  GetXSignUpPresenter({
+    required this.validation,
+    required this.addAccount,
+  });
 
   Stream<UIError?> get emailErrorStream => _emailError.stream;
   Stream<UIError?> get nameErrorStream => _nameError.stream;
@@ -24,7 +30,24 @@ class GetXSignUpPresenter {
   Stream<UIError?> get passwordConfirmationErrorStream => _passwordError.stream;
 
   void _validateForm() {
-    _isFormValid.value = _emailError.value == null && _email.isNotEmpty;
+    _isFormValid.value = _emailError.value == null &&
+        _email.isNotEmpty &&
+        _nameError.value == null &&
+        _name.isNotEmpty &&
+        _passwordError.value == null &&
+        _password.isNotEmpty &&
+        _passwordConfirmationError.value == null &&
+        _passwordConfirmation.isNotEmpty;
+  }
+
+  Future<void> signUp() async {
+    await addAccount.addAccount(
+        parameters: AddAccountParams(
+      email: _email,
+      name: _name,
+      password: _password,
+      passwordConfirmation: _passwordConfirmation,
+    ));
   }
 
   void validateEmail(String email) {

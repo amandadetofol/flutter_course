@@ -1,4 +1,6 @@
 import 'package:faker/faker.dart';
+import 'package:flutter_course/lib/domain/domain.dart';
+import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,12 +8,35 @@ import 'package:mocktail/mocktail.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class AddAccountSpy extends Mock implements AddAccount {}
+
+class AccountEntityMock extends Mock implements AccountEntity {}
+
+class AddAccountParamsSpy extends Mock implements AddAccountParams {}
+
 void main() {
   late GetXSignUpPresenter sut;
+  late AddAccountSpy addAccountSpy;
   late ValidationSpy validation;
+  late String token;
   late String email;
   late String name;
   late String password;
+  late AccountEntityMock accountEntityMock;
+
+  mockSignUp(AccountEntity? entity) {
+    when(
+      () => addAccountSpy.addAccount(
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer(
+      (_) async =>
+          entity ??
+          AccountEntity(
+            token: token,
+          ),
+    );
+  }
 
   mockValidation(String field, ValidationError? value) {
     when(
@@ -23,11 +48,60 @@ void main() {
   }
 
   setUp(() {
+    accountEntityMock = AccountEntityMock();
+
     email = faker.internet.email();
     password = faker.internet.password();
     name = faker.person.name();
+    token = faker.guid.guid();
+    addAccountSpy = AddAccountSpy();
     validation = ValidationSpy();
-    sut = GetXSignUpPresenter(validation: validation);
+    sut = GetXSignUpPresenter(
+      validation: validation,
+      addAccount: addAccountSpy,
+    );
+
+    registerFallbackValue(accountEntityMock);
+    registerFallbackValue(
+      AddAccountParams(
+          name: name,
+          email: email,
+          password: password,
+          passwordConfirmation: password),
+    );
+    mockSignUp(accountEntityMock);
+  });
+
+  test('Should enable form button if all fields are valid', () async {
+    expectLater(sut.isFormValidStream, emitsInAnyOrder([false, true]));
+
+    sut.validateEmail(email);
+    await Future.delayed(Duration.zero);
+    sut.validateName(name);
+    await Future.delayed(Duration.zero);
+    sut.validatePassword(password);
+    await Future.delayed(Duration.zero);
+    sut.validatePasswordConfirmation(password);
+    await Future.delayed(Duration.zero);
+  });
+
+  test('Should call AddAccount with correct values', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    verify(() {
+      addAccountSpy.addAccount(
+          parameters: AddAccountParams(
+        name: name,
+        email: email,
+        password: password,
+        passwordConfirmation: password,
+      ));
+    }).called(1);
   });
 
   group('e-mail tests', () {
