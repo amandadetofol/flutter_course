@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_course/lib/domain/domain.dart';
+import 'package:flutter_course/lib/domain/helpers/helpers.dart';
 import 'package:flutter_course/lib/presentation/presentation.dart';
 import 'package:flutter_course/lib/ui/helpers/helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,6 +53,14 @@ void main() {
   void mockSaveCurrentAccount() {
     when(() => saveCurrentAccount.save(any()))
         .thenAnswer((_) async => AccountEntity(token: token));
+  }
+
+  void mockSaveCurrentAccountError() {
+    when(
+      () => saveCurrentAccount.save(
+        any(),
+      ),
+    ).thenThrow(DomainError.unexpected);
   }
 
   setUp(() {
@@ -126,6 +135,20 @@ void main() {
     verify(() {
       saveCurrentAccount.save(accountEntityMock);
     }).called(1);
+  });
+
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    mockSaveCurrentAccountError();
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(
+      () async => await sut.signUp(),
+      throwsA(DomainError.unexpected),
+    );
   });
 
   group('e-mail tests', () {

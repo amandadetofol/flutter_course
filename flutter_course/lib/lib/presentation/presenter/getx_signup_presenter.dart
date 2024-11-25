@@ -1,3 +1,4 @@
+import 'package:flutter_course/lib/domain/helpers/helpers.dart';
 import 'package:flutter_course/lib/domain/usecases/usecases.dart';
 import 'package:flutter_course/lib/presentation/presenter/protocols/validation.dart';
 import 'package:get/get.dart';
@@ -43,17 +44,23 @@ class GetXSignUpPresenter {
   }
 
   Future<void> signUp() async {
-    final account = await addAccount.addAccount(
-      parameters: AddAccountParams(
-        email: _email,
-        name: _name,
-        password: _password,
-        passwordConfirmation: _passwordConfirmation,
-      ),
-    );
+    try {
+      final account = await addAccount.addAccount(
+        parameters: AddAccountParams(
+          email: _email,
+          name: _name,
+          password: _password,
+          passwordConfirmation: _passwordConfirmation,
+        ),
+      );
 
-    if (account != null) {
-      await saveCurrentAccount.save(account);
+      if (account != null) {
+        await saveCurrentAccount.save(account);
+      } else {
+        throw DomainError.unexpected;
+      }
+    } catch (error) {
+      throw DomainError.unexpected;
     }
   }
 
