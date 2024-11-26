@@ -12,7 +12,11 @@ void main() {
         EmailValidation(),
         const RequiredFieldValidation(field: 'email'),
         EmailValidation(),
-        const RequiredFieldValidation(field: 'password')
+        const RequiredFieldValidation(field: 'password'),
+        const MinLenghtValidation(
+          field: 'password',
+          size: 5,
+        )
       ],
     );
   });

@@ -9,6 +9,6 @@ ValidationComposite makeValidators() {
 List<FieldValidation> makeLoginValidations() {
   return [
     ...ValidationBuilder('email').required().email().build(),
-    ...ValidationBuilder('password').required().build(),
+    ...ValidationBuilder('password').required().min(5).build(),
   ];
 }
