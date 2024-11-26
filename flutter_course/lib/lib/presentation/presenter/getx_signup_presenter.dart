@@ -66,9 +66,16 @@ class GetXSignUpPresenter {
         _isLoading.value = false;
         _mainError.value = UIError.unexpected;
       }
-    } catch (error) {
+    } on DomainError catch (error) {
       _isLoading.value = false;
-      _mainError.value = UIError.unexpected;
+      switch (error) {
+        case DomainError.unexpected:
+          _mainError.value = UIError.unexpected;
+        case DomainError.invalidCredentials:
+          _mainError.value = UIError.invalidCredentials;
+        case DomainError.emailInUse:
+          _mainError.value = UIError.emailInUse;
+      }
     }
   }
 

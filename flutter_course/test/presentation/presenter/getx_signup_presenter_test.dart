@@ -41,6 +41,14 @@ void main() {
     );
   }
 
+  mockSignUpError(DomainError error) {
+    when(
+      () => addAccountSpy.addAccount(
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenThrow(error);
+  }
+
   mockValidation(String field, ValidationError? value) {
     when(
       () => validation.validate(
@@ -90,6 +98,53 @@ void main() {
     );
     mockSignUp(accountEntityMock);
     mockSaveCurrentAccount();
+  });
+  test('Should emit correct events on EmailInUseError', () async {
+    mockSignUpError(DomainError.emailInUse);
+
+    final isLoadingFuture = expectLater(
+      sut.isLoadingStream,
+      emitsInAnyOrder([true, false]),
+    );
+
+    final mainErrorFuture = expectLater(
+      sut.mainErrorStream,
+      emits(UIError.emailInUse),
+    );
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    await isLoadingFuture;
+    await mainErrorFuture;
+  });
+
+  test('Should amit correct events on UnexpectedError', () async {
+    mockSignUpError(DomainError.unexpected);
+
+    final isLoadingFuture = expectLater(
+      sut.isLoadingStream,
+      emitsInAnyOrder([true, false]),
+    );
+
+    final mainErrorFuture = expectLater(
+      sut.mainErrorStream,
+      emits(UIError.unexpected),
+    );
+
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    await sut.signUp();
+
+    await isLoadingFuture;
+    await mainErrorFuture;
   });
 
   test('Should enable form button if all fields are valid', () async {
