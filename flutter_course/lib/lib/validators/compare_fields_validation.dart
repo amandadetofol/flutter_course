@@ -21,8 +21,13 @@ class CompareFieldsValidation extends Equatable implements FieldValidation {
 
   @override
   ValidationError? validate(Map input) {
-    String value = input[field];
-    String valueToCompare = input[inputToCompare];
+    String? value = input[field];
+    String? valueToCompare = input[inputToCompare];
+
+    if (value == null || valueToCompare == null) {
+      return null;
+    }
+
     return (value == valueToCompare) ? null : ValidationError.invalidField;
   }
 }

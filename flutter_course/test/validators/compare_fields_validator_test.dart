@@ -27,4 +27,19 @@ void main() {
     var error = sut.validate(formData);
     expect(error, null);
   });
+
+  test('Should return null on invalid cases', () {
+    var error1 = sut.validate({
+      'other_field': 'any_value',
+    });
+    expect(error1, null);
+
+    var error2 = sut.validate({
+      'any_field': 'any_value',
+    });
+    expect(error2, null);
+
+    var error3 = sut.validate({});
+    expect(error3, null);
+  });
 }
