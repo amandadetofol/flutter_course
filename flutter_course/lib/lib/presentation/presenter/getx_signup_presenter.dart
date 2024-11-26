@@ -15,6 +15,8 @@ class GetXSignUpPresenter {
   final Rx<UIError?> _nameError = Rx<UIError?>(null);
   final Rx<UIError?> _passwordError = Rx<UIError?>(null);
   final Rx<UIError?> _passwordConfirmationError = Rx<UIError?>(null);
+  final Rx<String?> _navigateTo = Rx<String?>(null);
+
   final RxBool _isFormValid = false.obs;
   final RxBool _isLoading = false.obs;
   String _email = "";
@@ -35,6 +37,7 @@ class GetXSignUpPresenter {
   Stream<UIError?> get passwordErrorStream => _passwordError.stream;
   Stream<UIError?> get passwordConfirmationErrorStream => _passwordError.stream;
   Stream<UIError?> get mainErrorStream => _mainError.stream;
+  Stream<String?> get navigateToStream => _navigateTo.stream;
 
   void _validateForm() {
     _isFormValid.value = _emailError.value == null &&
@@ -61,6 +64,7 @@ class GetXSignUpPresenter {
 
       if (account != null) {
         await saveCurrentAccount.save(account);
+        _navigateTo.value = "/surveys";
         _isLoading.value = false;
       } else {
         _isLoading.value = false;

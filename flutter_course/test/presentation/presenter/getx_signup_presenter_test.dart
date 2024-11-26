@@ -234,6 +234,35 @@ void main() {
     await sut.signUp();
   });
 
+  test(
+    'Should navigate to surveys on authentication success',
+    () async {
+      sut.validateEmail(email);
+      sut.validateName(name);
+      sut.validatePassword(password);
+      sut.validatePasswordConfirmation(password);
+
+      final navigateToStream =
+          expectLater(sut.navigateToStream, emitsThrough('/surveys'));
+
+      await sut.signUp();
+
+      sut.navigateToStream.listen(
+        (page) {
+          expectAsync1(
+            (page) {
+              expect(page, '/surveys');
+            },
+          );
+        },
+      );
+
+      await Future.wait([
+        navigateToStream,
+      ]);
+    },
+  );
+
   group('e-mail tests', () {
     test('Shouldcall validation with correct email', () {
       sut.validateEmail(email);

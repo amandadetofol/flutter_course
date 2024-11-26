@@ -400,6 +400,23 @@ void main() {
   );
 
   test(
+    'Should go to signup page  on link click',
+    () async {
+      sut.goToSignUp();
+
+      sut.navigateToStream.listen(
+        (page) {
+          expectAsync1(
+            (page) {
+              expect(page, '/signup');
+            },
+          );
+        },
+      );
+    },
+  );
+
+  test(
     'Should emit correct events on invalid credentials error',
     () async {
       mockAuthenticationError(DomainError.invalidCredentials);

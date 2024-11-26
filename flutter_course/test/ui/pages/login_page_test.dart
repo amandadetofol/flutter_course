@@ -257,4 +257,19 @@ void main() {
       ]);
     },
   );
+
+  testWidgets(
+    'Should call go to Signup on link click',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      final button = find.text('Criar conta'.toUpperCase());
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+
+      verifyNever(
+        () => presenter.goToSignUp(),
+      );
+    },
+  );
 }

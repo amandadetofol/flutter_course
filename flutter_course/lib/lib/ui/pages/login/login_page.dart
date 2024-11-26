@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: SignInButton(),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: widget.presenter.goToSignUp,
                             child: Text(
                               R.translations.addAccount.toUpperCase(),
                             ),

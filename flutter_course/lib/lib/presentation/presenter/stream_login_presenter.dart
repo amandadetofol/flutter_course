@@ -136,6 +136,11 @@ class StreamLoginPresenter implements LoginPresenter {
         return null;
     }
   }
+
+  @override
+  void goToSignUp() {
+    _state.path = '/signup';
+  }
 }
 
 class LoginState {
