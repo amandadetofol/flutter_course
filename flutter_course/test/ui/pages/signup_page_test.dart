@@ -421,4 +421,20 @@ void main() {
       ]);
     },
   );
+
+  testWidgets(
+    'Should call goToLogin on link click ',
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      final button = find.text('Login');
+      await tester.ensureVisible(button);
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+
+      verifyNever(() {
+        presenter.goToLogin();
+      });
+    },
+  );
 }

@@ -22,7 +22,7 @@ class SignUpButton extends StatelessWidget {
                   presenter.signUp();
                 },
           child: Text(
-            R.translations.login.toUpperCase(),
+            R.translations.addAccount.toUpperCase(),
           ),
         );
       },

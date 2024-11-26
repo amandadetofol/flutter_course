@@ -73,7 +73,7 @@ class _SignUpPage extends State<SignUpPage> {
                     Headline01(
                       text: R.translations.login.toUpperCase(),
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(24),
                       child: Form(
                         child: Column(
@@ -84,6 +84,9 @@ class _SignUpPage extends State<SignUpPage> {
                             PasswordInput(),
                             PasswordConfirmationInput(),
                             SignUpButton(),
+                            TextButton(
+                                onPressed: widget.presenter.goToLogin,
+                                child: Text('Login'))
                           ],
                         ),
                       ),

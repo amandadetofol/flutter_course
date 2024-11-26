@@ -4,8 +4,9 @@ import 'package:flutter_course/lib/presentation/presenter/protocols/validation.d
 import 'package:get/get.dart';
 
 import '../../ui/helpers/errors/ui_error.dart';
+import '../../ui/pages/signup/signup_presenter.dart';
 
-class GetXSignUpPresenter {
+class GetXSignUpPresenter implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -30,13 +31,21 @@ class GetXSignUpPresenter {
     required this.saveCurrentAccount,
   });
 
+  @override
   Stream<UIError?> get emailErrorStream => _emailError.stream;
+  @override
   Stream<UIError?> get nameErrorStream => _nameError.stream;
+  @override
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+  @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
+  @override
   Stream<UIError?> get passwordErrorStream => _passwordError.stream;
+  @override
   Stream<UIError?> get passwordConfirmationErrorStream => _passwordError.stream;
+  @override
   Stream<UIError?> get mainErrorStream => _mainError.stream;
+  @override
   Stream<String?> get navigateToStream => _navigateTo.stream;
 
   void _validateForm() {
@@ -50,6 +59,7 @@ class GetXSignUpPresenter {
         _passwordConfirmation.isNotEmpty;
   }
 
+  @override
   Future<void> signUp() async {
     _isLoading.value = true;
     try {
@@ -83,24 +93,28 @@ class GetXSignUpPresenter {
     }
   }
 
+  @override
   void validateEmail(String email) {
     _email = email;
     _emailError.value = _validateField('email', email);
     _validateForm();
   }
 
+  @override
   void validateName(String name) {
     _name = name;
     _nameError.value = _validateField('name', name);
     _validateForm();
   }
 
+  @override
   void validatePassword(String password) {
     _passwordConfirmation = password;
     _passwordConfirmationError.value = _validateField('password', password);
     _validateForm();
   }
 
+  @override
   void validatePasswordConfirmation(String password) {
     _password = password;
     _passwordError.value = _validateField('password', password);
@@ -121,5 +135,10 @@ class GetXSignUpPresenter {
       default:
         return null;
     }
+  }
+
+  @override
+  void goToLogin() {
+    _navigateTo.value = '/login';
   }
 }
