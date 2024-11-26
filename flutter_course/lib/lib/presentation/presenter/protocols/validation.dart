@@ -8,4 +8,5 @@ abstract class Validation {
 enum ValidationError {
   requiredField,
   invalidField,
+  minLenghtCharacters,
 }
