@@ -14,27 +14,42 @@ void main() {
   });
 
   test('Should return error if value is empty', () {
-    var error = sut.validate('');
+    var formData = {
+      'any_field': '',
+    };
+    var error = sut.validate(formData);
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return error if value is null', () {
-    var error = sut.validate(null);
+    var formData = {
+      'any_field': null,
+    };
+    var error = sut.validate(formData);
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return error if value is less then min size', () {
-    var error = sut.validate(faker.randomGenerator.string(4, min: 1));
+    var formData = {
+      'any_field': faker.randomGenerator.string(4, min: 1),
+    };
+    var error = sut.validate(formData);
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return null if string is equal to min size', () {
-    var error = sut.validate(faker.randomGenerator.string(5, min: 5));
+    var formData = {
+      'any_field': faker.randomGenerator.string(5, min: 5),
+    };
+    var error = sut.validate(formData);
     expect(error, null);
   });
 
   test('Should return null if string is more to min size', () {
-    var error = sut.validate(faker.randomGenerator.string(10, min: 5));
+    var formData = {
+      'any_field': faker.randomGenerator.string(10, min: 5),
+    };
+    var error = sut.validate(formData);
     expect(error, null);
   });
 }

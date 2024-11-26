@@ -96,35 +96,42 @@ class GetXSignUpPresenter implements SignUpPresenter {
   @override
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = _validateField('email', email);
+    _emailError.value = _validateField('email');
     _validateForm();
   }
 
   @override
   void validateName(String name) {
     _name = name;
-    _nameError.value = _validateField('name', name);
+    _nameError.value = _validateField('name');
     _validateForm();
   }
 
   @override
   void validatePassword(String password) {
-    _passwordConfirmation = password;
-    _passwordConfirmationError.value = _validateField('password', password);
+    _password = password;
+    _passwordError.value = _validateField('password');
     _validateForm();
   }
 
   @override
   void validatePasswordConfirmation(String password) {
-    _password = password;
-    _passwordError.value = _validateField('password', password);
+    _passwordConfirmation = password;
+    _passwordConfirmationError.value = _validateField('password');
     _validateForm();
   }
 
-  UIError? _validateField(String field, String value) {
+  UIError? _validateField(String field) {
+    final formData = {
+      'name': _name,
+      'email': _email,
+      'password': _password,
+      'passwordConfirmation': _passwordConfirmation,
+    };
+
     final error = validation.validate(
       field: field,
-      value: value,
+      input: formData,
     );
 
     switch (error) {

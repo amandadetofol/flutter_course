@@ -3,11 +3,20 @@ import 'package:flutter_course/lib/validators/validators.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  late RequiredFieldValidation sut;
+
+  setUp(() {
+    sut = const RequiredFieldValidation(field: 'any_field');
+  });
+
   test(
     'should return null if value is not empty',
     () {
-      final sut = RequiredFieldValidation(field: 'any_field');
-      var fieldError = sut.validate('any_value');
+      var formData = {
+        'any_field': 'any_value',
+      };
+
+      var fieldError = sut.validate(formData);
       expect(fieldError, null);
     },
   );
@@ -15,8 +24,10 @@ void main() {
   test(
     'should return error message if value is null',
     () {
-      final sut = RequiredFieldValidation(field: 'any_field');
-      var fieldError = sut.validate(null);
+      var formData = {
+        'any_field': null,
+      };
+      var fieldError = sut.validate(formData);
       expect(fieldError, ValidationError.requiredField);
     },
   );
@@ -24,8 +35,11 @@ void main() {
   test(
     'should return error message if value is empty',
     () {
-      final sut = RequiredFieldValidation(field: 'any_field');
-      var fieldError = sut.validate('');
+      var formData = {
+        'any_field': '',
+      };
+
+      var fieldError = sut.validate(formData);
       expect(fieldError, ValidationError.requiredField);
     },
   );

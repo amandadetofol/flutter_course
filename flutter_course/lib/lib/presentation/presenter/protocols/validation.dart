@@ -1,7 +1,7 @@
 abstract class Validation {
   ValidationError? validate({
     String field,
-    String value,
+    required Map input,
   });
 }
 

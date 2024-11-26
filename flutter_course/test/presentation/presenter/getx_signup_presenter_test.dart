@@ -53,7 +53,7 @@ void main() {
     when(
       () => validation.validate(
         field: field,
-        value: any(named: 'value'),
+        input: any(named: 'input'),
       ),
     ).thenReturn(value);
   }
@@ -270,7 +270,12 @@ void main() {
       verify(() {
         validation.validate(
           field: 'email',
-          value: email,
+          input: {
+            'name': '',
+            'email': email,
+            'password': '',
+            'passwordConfirmation': ''
+          },
         );
       }).called(1);
     });
@@ -364,7 +369,12 @@ void main() {
       verify(() {
         validation.validate(
           field: 'name',
-          value: name,
+          input: {
+            'name': name,
+            'email': '',
+            'password': '',
+            'passwordConfirmation': ''
+          },
         );
       }).called(1);
     });
@@ -431,7 +441,12 @@ void main() {
       verify(() {
         validation.validate(
           field: 'password',
-          value: password,
+          input: {
+            'name': '',
+            'email': '',
+            'password': password,
+            'passwordConfirmation': ''
+          },
         );
       }).called(1);
     });
@@ -498,7 +513,12 @@ void main() {
       verify(() {
         validation.validate(
           field: 'password',
-          value: password,
+          input: {
+            'name': '',
+            'email': '',
+            'password': '',
+            'passwordConfirmation': password
+          },
         );
       }).called(1);
     });

@@ -7,8 +7,11 @@ class ValidationComposite implements Validation {
   ValidationComposite({required this.validations});
 
   @override
-  ValidationError? validate({String? field, String? value}) {
+  ValidationError? validate({String? field, required Map input}) {
+    if (field == null || !input.containsKey(field)) return null;
+
     ValidationError? error;
+    var value = input[field];
 
     for (final validation in validations.where((v) => v.field == field)) {
       error = validation.validate(value);

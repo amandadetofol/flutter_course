@@ -7,18 +7,24 @@ void main() {
 
   setUp(() {
     sut = const CompareFieldsValidation(
-      field: 'any_field',
-      valueToCompare: 'any_value',
-    );
+        field: 'any_field', inputToCompare: 'other_field');
   });
 
   test('Should return error if value is different from value to compare', () {
-    var error = sut.validate('other_value');
+    var formData = {
+      'other_field': 'other_value',
+      'any_field': 'any_value',
+    };
+    var error = sut.validate(formData);
     expect(error, ValidationError.invalidField);
   });
 
   test('Should return null if values are equal', () {
-    var error = sut.validate('any_value');
+    var formData = {
+      'other_field': 'any_value',
+      'any_field': 'any_value',
+    };
+    var error = sut.validate(formData);
     expect(error, null);
   });
 }

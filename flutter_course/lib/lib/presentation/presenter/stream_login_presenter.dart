@@ -65,21 +65,15 @@ class StreamLoginPresenter implements LoginPresenter {
 
   @override
   void validateEmail(String email) {
-    _state.emailError = _validateField(
-      'email',
-      email,
-    );
     _state.email = email;
+    _state.emailError = _validateField('email');
     _controller.add(_state);
   }
 
   @override
   void validatePassword(String password) {
-    _state.passwordError = _validateField(
-      'password',
-      password,
-    );
     _state.password = password;
+    _state.passwordError = _validateField('password');
     _controller.add(_state);
   }
 
@@ -121,10 +115,15 @@ class StreamLoginPresenter implements LoginPresenter {
     _controller.close();
   }
 
-  UIError? _validateField(String field, String value) {
+  UIError? _validateField(String field) {
+    final formData = {
+      'email': _state.email,
+      'password': _state.password,
+    };
+
     final error = validation.validate(
       field: field,
-      value: value,
+      input: formData,
     );
 
     switch (error) {

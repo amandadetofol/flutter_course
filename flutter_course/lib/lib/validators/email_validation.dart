@@ -8,7 +8,8 @@ class EmailValidation extends Equatable implements FieldValidation {
   String get field => 'email';
 
   @override
-  ValidationError? validate(String? value) {
+  ValidationError? validate(Map input) {
+    String? value = input[field];
     if (value == null || value == '') {
       return null;
     }
