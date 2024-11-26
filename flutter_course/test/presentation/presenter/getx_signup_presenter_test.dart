@@ -168,6 +168,17 @@ void main() {
     );
   });
 
+  test('Should emit correct events on SignUp success', () async {
+    sut.validateEmail(email);
+    sut.validateName(name);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(password);
+
+    expectLater(sut.isLoadingStream, emits(true));
+
+    await sut.signUp();
+  });
+
   group('e-mail tests', () {
     test('Shouldcall validation with correct email', () {
       sut.validateEmail(email);
