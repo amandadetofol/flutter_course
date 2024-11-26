@@ -41,4 +41,10 @@ void main() {
     var error = sut.validate(formData);
     expect(error, null);
   });
+
+  test('Should  return null onm invalid case', () {
+    var formData = {};
+    var error = sut.validate(formData);
+    expect(error, null);
+  });
 }
